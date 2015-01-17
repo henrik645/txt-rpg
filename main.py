@@ -1,226 +1,135 @@
-import sqlite3 as sqlite;
-import time
+class Room:
+    def __init__(self, configuration={}):
+        self.doors = configuration
 
-global inventory
-inventory = []
-conn = sqlite.connect("rpg.db")
-c = conn.cursor()
+class Merchant:
+    def __init__(self, markup=1.2, markdown=0.8):
+        self.inventory = []
+        self.markup = markup
+        self.markdown = markdown
+        
+    def add_item(self, item):
+        # Adds an item to the merchant's inventory
+        
+        if (not isinstance(item, Item)):
+            raise TypeError("Unexpected " + type(item))
 
-def is_int(s):
-  try:
-    int(s)
-    return True
-  except ValueError:
-    return False
+        self.inventory.append(item)
 
-def showInventory(use):
-  print(armour)
-  print(len(armour))
-  print(" - Inventory - ")
-  item_names = []
-  item_descriptions = []
-  for i in range(len(inventory)):
-    c.execute('SELECT name FROM items WHERE id=?', (inventory[i],))
-    item_names.append(c.fetchone())
-  for i in range(len(inventory)):
-    c.execute('SELECT description FROM items WHERE id=?', (inventory[i],))
-    item_descriptions.append(c.fetchone())
-  if len(inventory) <= 0:
-    print("You are not in possession of any items.")
-    return False
-  else:
-    if use == "show":
-      for i in range(len(inventory)):
-        print(item_names[i][0] + " - " + item_descriptions[i][0])
-    else:
-      for i in range(len(inventory)):
-        print(str(i) + " - " + item_names[i][0] + " - " + item_descriptions[i][0])
-    return True
+    def get_selling_offers(self):
+        # Lists all items in the merchant's inventory
+        # and adds the markup fee
 
-def showEquipment():
-  if len(armour) > 0:
-    c.execute('SELECT name FROM items WHERE id=?', (armour[i],))
-    item_names.append(c.fetchone())
-    c.execute('SELECT description FROM items WHERE id=?', (armour[i],))
-    print("")
-    print("Equipment: ")
-    if use == "use":
-      for i in range(len(armour)):
-        print(str(i + len(inventory)) + " - " + item_names[i][0] + " - " + item_descriptions[i][0])
-    else:
-      for i in range(len(armour)):
-        print(item_names[i][0] + " - " + item_descriptions[i][0])
-    return True
-  else:
-    print("You do not have any equipment.")
-    return False
+        offers = []
+        for item in self.inventory:
+            offer = (item, item.value*self.markup)
+            offers.append(offer)
 
-def placeInfo(x, y, refresh):
-  title = ["", "", "", "", ""]
-  c.execute('SELECT title FROM places WHERE x=? and y=?', (x, y))
-  title[0] = c.fetchone()
-  c.execute('SELECT title FROM places WHERE x=? and y=?', (x, y + 1))
-  title[1] = c.fetchone()
-  c.execute('SELECT title FROM places WHERE x=? and y=?', (x, y - 1))
-  title[2] = c.fetchone()
-  c.execute('SELECT title FROM places WHERE x=? and y=?', (x + 1, y))
-  title[3] = c.fetchone()
-  c.execute('SELECT title FROM places WHERE x=? and y=?', (x - 1, y))
-  title[4] = c.fetchone()
-  c.execute('SELECT description FROM places WHERE x=? and y=?', (x, y))
-  description = c.fetchone()
-  c.execute('SELECT exit FROM places WHERE x=? and y=?', (x, y))
-  exits = c.fetchone()
-  c.execute('SELECT id FROM places WHERE x=? and y=?', (x, y)) #x, y -> place_ids
-  place_ids = c.fetchone()
-  c.execute('SELECT action FROM places_actions WHERE place_id=?', (place_ids[0],)) #actions = place_actions(place_ids)
-  actions_available = c.fetchone()
-  if actions_available is not None:
-    if actions_available[0] == "buy":
-      item_ids = []
-      item_names = []
-      item_descriptions = []
-      item_prices = []
-      c.execute('SELECT item_id FROM places_items WHERE place_id=?', (place_ids[0],)) #item_id = places_items(place-id)
-      for i in c:
-        item_ids.append(i[0])
-      for i in range(len(item_ids)):
-        c.execute('SELECT name FROM items WHERE id=?', (item_ids[i],))
-        item_names.append(c.fetchone())
-      for i in range(len(item_ids)):
-        c.execute('SELECT description FROM items WHERE id=?', (item_ids[i],))
-        item_descriptions.append(c.fetchone())
-      c.execute('SELECT price FROM places_items WHERE place_id=?', (place_ids[0],))
-      for i in c:
-        item_prices.append(i)
-  
-  if refresh:
-    print (title[0][0])
-    print (description[0])
-    print ("")
-    print ("Exits: ")
-  north = False
-  east = False
-  south = False
-  west = False
-  if exits[0] & 8 == 8:
-    if refresh:
-      print("North (" + title[1][0] + ")")
-    north = True
-  if exits[0] & 4 == 4:
-    if refresh:
-      print("East (" + title[3][0] + ")")
-    east = True
-  if exits[0] & 2 == 2:
-    if refresh:
-      print("South (" + title[2][0] + ")")
-    south = True
-  if exits[0] & 1 == 1:
-    if refresh:
-      print("West (" + title[4][0] + ")")
-    west = True
-  
-  if refresh:
-    print("")
-    print ("Actions available: ")
-    if actions_available is not None:
-      for i in actions_available:
-        print(i)
-    else:
-      print("None")
-  if actions_available is not None:
-    return (north, east, south, west, actions_available, item_ids, item_names, item_descriptions, item_prices)
-  else:
-    return(north, east, south, west, None, None, None, None, None)
+        return offers
 
-x, y = 1, 1
-gold = 5
-refresh = True
-maxhp = 100
-hp = 70
-defense = 0
-armour = []
+    def get_buying_offers(self, items):
+        # Generates buying offers on the items in 'items'
+
+        offers = []
+        for item in items:
+            offer = (item, item.value*self.markdown)
+            offers.append(offer)
+
+        return offers
+
+class Town(Room):
+    def __init__(self, name, description, room_configuration={}):
+        super().__init__(room_configuration)
+        self.name = name
+        self.description = description
+
+class Item:
+    def __init__(self, name, description, value):
+        self.name = name
+        self.description = description
+        self.value = value # The item's monetary value
+
+        @property
+        def value(self):
+            return self.value
+
+        @value.setter
+        def x(self, value):
+            if value < 0:
+                raise ValueError("Item value cannot be less than 0")
+            else:
+                self.value = value
+
+class Weapon(Item):
+    def __init__(self, name, description, damage=0, value=0):
+        self.damage = damage
+        super().__init__(name, description, value)
+
+class Player:
+    def __init__(self, room, hp=100, inventory=[], armour=[]):
+        self.room = room
+        self.hp = hp
+        self.inventory = inventory
+        self.armour = armour
+    
+    def go_to(self, room):
+        self.room = room
+        
+def view_selling_offers(merchant):
+    selling_offers = merchant.merchant.get_selling_offers()
+
+    selling_offers_formatted = []
+
+    for offer in selling_offers:
+        selling_offers_formatted.append((offer[0].name, offer[1]))
+
+    for i in range(len(selling_offers_formatted)):
+        print(str(i + 1) + " - " + selling_offers_formatted[i][0] + " - " + str(selling_offers_formatted[i][1]) + "G")
+
+ 
+martins_way = []
+town_square = Room()
+martins_way.append(Room())
+martins_way.append(Room())
+tailor = Room()
+blacksmith = Room()
+        
+town_square = Town("Town Square", "A stone brick fountain is located in the middle. You see farmers selling their goods.", {'north': martins_way[0]})
+martins_way[0] = Town("Martin's Way", "A wide stone brick road", {'north':martins_way[1], 'south':town_square})
+martins_way[1] = Town("Martin's Way", "A wide stone brick road", {'south':martins_way[0], 'west':tailor, 'east':blacksmith})
+tailor = Town("Tailor", "A heavy-set man is standing behind the oak counter. You see sewing supplies in the back room.", {'east': martins_way[1]})
+blacksmith = Town("Blacksmith", "A little stone building. You feel the heat from the forge.", {'west':martins_way[1]})
+
+tailor.merchant = Merchant(1.0, 0.8)
+blacksmith.merchant = Merchant(1.0, 0.8)
+
+leather_jacket = Item("Leather Jacket", "A large leather jacket. The quality isn't that good.", 5)
+leather_pants = Item("Leather Pants", "A pair of leather pants. The quality isn't that good.", 5)
+iron_pickaxe = Weapon("Iron Pickaxe", "A simple iron pickaxe. Useful for mining", 10, 10)
+iron_sword = Weapon("Iron Sword", "A simple iron sword. Useful for slaying enemies", 15, 20)
+iron_axe = Weapon("Iron Axe", "A simple iron axe. Useful for cutting down trees", 10, 15)
+
+tailor.merchant.add_item(leather_jacket)
+tailor.merchant.add_item(leather_pants)
+blacksmith.merchant.add_item(iron_pickaxe)
+blacksmith.merchant.add_item(iron_sword)
+blacksmith.merchant.add_item(iron_axe)
+
+player = Player(town_square)
+
+player.go_to(town_square) #Starting room is always town square.
 
 while True:
-  if refresh:
+    print(player.room.name)
+    print(player.room)
     for i in range(30):
-      print("")
-  #print("")
-  #print("")
-  exits = None
-  if refresh:
-    north, east, south, west, actions_available, item_ids, item_names, item_descriptions, item_prices = placeInfo(x, y, True)
-    refresh = False
-  else:
-    north, east, south, west, actions_available, item_ids, item_names, item_descriptions, item_prices = placeInfo(x, y, False)
-  exits = [north, east, south, west]
-  action = ""
-  action = raw_input(">")
-  action = action.lower()
-  if (action == "n" or action == "north") and exits[0]:
-    y += 1
-    refresh = True
-  elif (action == "e" or action == "east") and exits[1]:
-    x += 1
-    refresh = True
-  elif (action == "s" or action == "south") and exits[2]:
-    y -= 1
-    refresh = True
-  elif (action == "w" or action == "west") and exits[3]:
-    x -= 1
-    refresh = True
-  elif (action == "g" or action == "gold"):
-    print("You have: " + str(gold) + "G")
-    print("HP: " + str(hp))
-    print("Defense: " + str(defense))
-  elif (action == "i" or action == "inventory"):
-    showInventory("show")
-    showEquipment()
-  elif action == "u" or action == "use":
-    if showInventory("use"):
-      print("")
-      itemUsed = raw_input("Use item: ")
-      if is_int(itemUsed):
-        item_id = inventory[int(itemUsed)]
-        c.execute('SELECT hp_restore, attack, perishable, armour FROM item_stats WHERE item_id=?', (item_id,))
-        stats = []
-        for i in c:
-          stats.append(i)
-        if hp is not None and stats[0][0] is not None and (hp + stats[0][0]) < maxhp:
-            hp += stats[0][0]
-        elif hp is not None and stats[0][0] is not None and (hp + stats[0][0]) >= maxhp:
-            hp = maxhp
-        
-        if stats[0][1] is not None:
-          damage = stats[0][1]
-        
-        if stats[0][2] is not None:
-          inventory.remove(inventory[int(itemUsed)])
-          
-        if stats[0][3] is not None:
-          defense += stats[0][3]
-          armour.append(inventory[int(itemUsed)])
-          inventory.remove(inventory[int(itemUsed)])
-  else:
-    if actions_available is not None:
-      for i in actions_available:
-        if action == i:
-          print("")
-          for z in range(len(item_ids)):
-            print(str(z) + " " + item_names[z][0] + " - " + item_descriptions[z][0] + " - " + str(item_prices[z][0]) + "G")
-          chosen_item = raw_input("Enter item: ")
-          if is_int(chosen_item):
-            if int(chosen_item) < len(item_prices):
-              if item_prices[int(chosen_item)][0] > gold:
-                print("You are not in possession of enough gold.")
-              else:
-                inventory.append(item_ids[int(chosen_item)])
-                print("")
-                gold -= item_prices[int(chosen_item)][0]
-                print("You have " + str(gold) + "G left.")
-            else:
-              print("Enter again.")
-          else:
-            print("Enter again.")
-    else:
-      print("No such command")
+        print("")
+    print(player.room.name)
+    print(player.room.description)
+    print(player.room.doors)
+    print("Exits:")
+    for exit in player.room.doors:
+        print(exit.title() + " (" + player.room.name + ")")
+    walk_to = input(">")
+    print(player.room.doors[walk_to])
+    player.go_to(player.room.doors[walk_to])
