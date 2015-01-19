@@ -100,6 +100,6 @@ selling_offers = starting_room.doors['east'].merchant.get_selling_offers()
 selling_offers_formatted = []
 
 for offer in selling_offers:
-    selling_offers_formatted.append((offer[0], offer[1]))
+    selling_offers_formatted.append((offer[0].name, offer[1]))
     
 print(selling_offers_formatted)
