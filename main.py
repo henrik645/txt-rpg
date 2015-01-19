@@ -91,7 +91,7 @@ class Armour(Item):
         super().__init__(name, description, value)
 
 class Player:
-    def __init__(self, room, hp=100, max_hp=100, defense=0, money=100, inventory=[], armour=[]):
+    def __init__(self, room, hp=100, max_hp=100, defense=0, money=100, inventory=[], armour=[], killed=False, in_fight=False):
         self.room = room
         self.hp = hp
         self.max_hp = max_hp
@@ -99,6 +99,8 @@ class Player:
         self.armour = armour
         self.defense = defense
         self.money = money
+        self.killed = killed
+        self.in_fight = in_fight
     
     def go_to_room(self, room):
         self.room = room
@@ -134,9 +136,10 @@ class Player:
                 print(" * " + item)
       
 class Monster:
-    def __init__(self, name, hp, hp_per_hit):
+    def __init__(self, name, max_hp, hp_per_hit):
         self.name = name
-        self.hp = hp
+        self.hp = max_hp
+        self.max_hp = max_hp
         self.hp_per_hit = hp_per_hit
     
 def view_selling_offers(merchant):
@@ -174,9 +177,6 @@ class Loot_table():
                 chosen = self.list[i]
                 break
         
-        if chosen is None:
-            chosen = {}
-        
         return(chosen)
     
 directions = {'n': 'north', 'e': 'east', 's': 'south', 'w': 'west'}
@@ -185,7 +185,9 @@ town_square = Town("Town Square", "A stone brick fountain is located in the midd
 tailor = Town("Tailor", "You see sewing supplies in the back.")
 martins_way = [Town("Martin's Way 1", "A wide stone brick road."), Town("Martin's Way 2", "A wide stone brick road.")]
 blacksmith = Town("Blacksmith", "A little stone building. You feel the heat from the forge as soon as you step in.")
-north_gate = Wilderness("North Gate", "A high valved gate. Two guards are patrolling everyone coming in.", {}, monster_percent_north_gate)
+north_gate = Wilderness("North Gate", "A high valved gate. Two guards are patrolling everyone coming in.", {}, Loot_table([{'name': 'Wolf', 'level':1, 'percent': 0.75}]))
+
+monsters = [{'name': 'Wolf', 'max_hp': 25, 'hp_per_hit': 5}]
 
 tailor.doors['east'] = martins_way[1]
 town_square.doors['north'] = martins_way[0]
@@ -219,24 +221,41 @@ tailor.merchant.add_item(apple)
 player = Player(town_square) #Starting room is always town square.
 
 refresh = True
-player.armour.append(iron_sword)
+player.inventory.append(iron_sword)
+player.inventory.append(iron_axe)
 
 while True:
+    if player.killed:
+        player.killed = False
+        player.go_to_room(town_square) #Town square is respawn point
+        player.hp = player.max_hp
+        print("You respawned at " + player.room.name + ".")
+        print("")
+        refresh = True
     if refresh:
         for i in range(30):
             print("")
         refresh = False
         print(player.room.name)
         print(player.room.description)
-        if hasattr(player.room, 'merchant'):
+        if isinstance(player.room, Wilderness):
+            chosen_monster = player.room.monster_percent.choose_from_list()
+            if chosen_monster is not None:
+                print("You have been attacked by a level " + str(chosen_monster['level']) + " " + str(chosen_monster['name']) + "!")
+                player.in_fight = True
+                for i, monster in enumerate(monsters):
+                    if monster['name'] == chosen_monster['name']:
+                        fight_monster = Monster(chosen_monster['name'], monsters[i]['max_hp'], monsters[i]['hp_per_hit'])
+        if hasattr(player.room, 'merchant') and not player.in_fight:
             print("")
             print("A merchant is present.")
             view_selling_offers(player.room)
             print("Enter number to buy.")
-        print("")
-        print("Exits:")
-        for exit in player.room.doors:
-            print(exit.title() + " (" + player.room.doors[exit].name + ")")
+        if not player.in_fight:
+            print("")
+            print("Exits:")
+            for exit in player.room.doors:
+                print(exit.title() + " (" + player.room.doors[exit].name + ")")
     walk_to = input(">")
     walk_to = walk_to.lower()
     if walk_to == 'g' or walk_to == 'gold':
@@ -249,11 +268,12 @@ while True:
         player.view_equipment()
     elif walk_to == 'u' or walk_to == 'use':
         player.view_inventory(True)
+        player.view_equipment()
         print("Enter number to use or equip.")
         use = input(">")
         if use.isdigit():
             use = int(use)
-            if use >= 0 and use <= len(player.inventory):
+            if use >= 0 and use <= len(player.inventory) and len(player.inventory) > 0:
                 if isinstance(player.inventory[use], Consumable):
                     if player.hp + player.inventory[use].hp_restore > player.max_hp:
                         player.hp = player.max_hp
@@ -268,13 +288,29 @@ while True:
                     player.defense += item.defense
                     print("Equipped item.")
                     print("Your Defense level is " + str(player.defense))
+                elif isinstance(player.inventory[use], Weapon) and player.in_fight:
+                    print("You hit the " + fight_monster.name + " with your " + player.inventory[use].name + "!")
+                    fight_monster.hp -= player.inventory[use].damage
+                    if fight_monster.hp <= 0:
+                        print("The " + fight_monster.name + " died!")
+                        player.in_fight = False
+                    else:                        
+                        print(fight_monster.name + " HP: " + str(fight_monster.hp) + " / " + str(fight_monster.max_hp))
+                        print("The " + fight_monster.name + " hit you!")
+                        player.hp -= fight_monster.hp_per_hit
+                        if player.hp <= 0:
+                            print("The " + fight_monster.name + " killed you!")
+                            player.in_fight = False
+                            player.killed = True
+                        else:
+                            print("Your HP: " + str(player.hp) + " / " + str(player.max_hp))
                 else:
                     print("This item can not be equipped.")
                
     else:
         for dir_abbr, direction in directions.items():
             if direction in player.room.doors:
-                if walk_to == dir_abbr:
+                if walk_to == dir_abbr and player.in_fight == False:
                     player.go_to_room(player.room.doors[direction])
                     refresh = True
                     break
@@ -282,6 +318,8 @@ while True:
                     player.go_to_room(player.room.doors[direction])
                     refresh = True
                     break
+                elif player.in_fight:
+                    print("You can not leave while in a fight!")
         try:  #Tries if walk_to (player input) is a number, meaning that the player have chosen to buy an item.
             walk_to = int(walk_to)
             selling_offers = player.room.merchant.get_selling_offers()
