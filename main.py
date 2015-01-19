@@ -1,17 +1,28 @@
 import sys
 import copy
 import random
+import math
 
 class Room:
     def __init__(self, configuration={}):
         self.doors = copy.deepcopy(configuration)
 
 class Wilderness(Room):
-    def __init__(self, name, description, configuration, monster_percent):
+    def __init__(self, name, description, configuration, monster_percent, type=None):
         super().__init__(configuration)
         self.name = name
         self.description = description
         self.monster_percent = monster_percent
+        self.type = type
+
+class Resource(Room):
+    def __init__(self, name, description, configuration, item=None, weapon_required=None, type=None):
+        super().__init__(configuration)
+        self.name = name
+        self.description = description
+        self.item = item
+        self.weapon_required = weapon_required
+        self.type = type
 
 class Merchant:
     def __init__(self, markup=1.2, markdown=0.8):
@@ -49,10 +60,11 @@ class Merchant:
         return offers
 
 class Town(Room):
-    def __init__(self, name, description, room_configuration={}):
+    def __init__(self, name, description, room_configuration={}, type=None):
         super().__init__(room_configuration)
         self.name = name
         self.description = description
+        self.type = type
 
 #Types of items are: Item (Normal item), Consumable (Removed after use) and Armour (Normal armour. Defense level is stored at defense) If any item restores HP, the
 #maximum amount of HP restored is stored at hp_restore
@@ -134,7 +146,7 @@ class Player:
             
             for item in items_formatted:
                 print(" * " + item)
-      
+        
 class Monster:
     def __init__(self, name, max_hp, hp_per_hit):
         self.name = name
@@ -180,12 +192,14 @@ class Loot_table():
         return(chosen)
     
 directions = {'n': 'north', 'e': 'east', 's': 'south', 'w': 'west'}
+map_icons = {'building': '*', 'path': '+', 'player': 'X'}
 
 town_square = Town("Town Square", "A stone brick fountain is located in the middle. You see farmers selling their goods.")
 tailor = Town("Tailor", "You see sewing supplies in the back.")
 martins_way = [Town("Martin's Way 1", "A wide stone brick road."), Town("Martin's Way 2", "A wide stone brick road.")]
 blacksmith = Town("Blacksmith", "A little stone building. You feel the heat from the forge as soon as you step in.")
 north_gate = Wilderness("North Gate", "A high valved gate. Two guards are patrolling everyone coming in.", {}, Loot_table([{'name': 'Wolf', 'level':1, 'percent': 0.75}]))
+forest = Resource("Black Forest", "The trees are so tightly packed you can barely see sunlight.", {}, None, None)
 
 monsters = [{'name': 'Wolf', 'max_hp': 25, 'hp_per_hit': 5}]
 
@@ -199,7 +213,17 @@ martins_way[1].doors['south'] = martins_way[0]
 martins_way[1].doors['west'] = tailor
 martins_way[1].doors['north'] = north_gate
 north_gate.doors['south'] = martins_way[1]
+north_gate.doors['north'] = forest
 blacksmith.doors['west'] = martins_way[1]
+forest.doors['south'] = north_gate
+
+town_square.type = 'path'
+tailor.type = 'building'
+blacksmith.type = 'building'
+martins_way[0].type = 'path'
+martins_way[1].type = 'path'
+north_gate.type = 'building'
+forest.type = 'path'
 
 tailor.merchant = Merchant(1.0, 0.8)
 blacksmith.merchant = Merchant(1.0, 0.8)
@@ -210,6 +234,10 @@ iron_pickaxe = Weapon("Iron Pickaxe", "A simple iron pickaxe. Useful for mining"
 iron_sword = Weapon("Iron Sword", "A simple iron sword. Useful for slaying enemies", 15, 20)
 iron_axe = Weapon("Iron Axe", "A simple iron axe. Useful for cutting down trees", 10, 15)
 apple = Consumable("Apple", "A tasty apple", 3, 10)
+wood = Item("Log", "A heavy oak log. Useful for crafting.", 2)
+
+forest.item = wood
+forest.weapon_required = iron_axe
 
 tailor.merchant.add_item(leather_jacket)
 tailor.merchant.add_item(leather_pants)
@@ -275,7 +303,7 @@ while True:
             use = int(use)
             if use >= 0 and use <= len(player.inventory) and len(player.inventory) > 0:
                 if isinstance(player.inventory[use], Consumable):
-                    if player.hp + player.inventory[use].hp_restore > player.max_hp:
+                    if player.hp + player.inventory[use].hp_restore >= player.max_hp:
                         player.hp = player.max_hp
                         print("You were restored to " + str(player.max_hp) + " HP.")
                     else:
@@ -304,6 +332,12 @@ while True:
                             player.killed = True
                         else:
                             print("Your HP: " + str(player.hp) + " / " + str(player.max_hp))
+                elif isinstance(player.inventory[use], Weapon) and isinstance(player.room, Resource):
+                    if player.inventory[use] == player.room.weapon_required:
+                        print("You got one " + player.room.item.name + ".")
+                        player.inventory.append(player.room.item)
+                    else:
+                        print("You are not able to use this tool here.")
                 else:
                     print("This item can not be equipped.")
                
