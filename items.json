@@ -1,0 +1,9 @@
+[
+    {"name": "Leather Jacket", "description": "A large leather jacket. The quality isn't that good", "value": 5, "type": "Armour", "args": [10, 2]},
+    {"name": "Leather pants", "description": "A pair of leather pants. The quality isn't that good.", "value": 5, "type": "Armour", "args": [10, 0]},
+    {"name": "Iron Pickaxe", "description": "A simple iron pickaxe", "value": 10, "type": "Weapon", "args": [10]},
+    {"name": "Iron Sword", "description": "A simple iron sword. Useful for slaying enemies", "value": 20, "type": "Weapon", "args": [15]},
+    {"name": "Iron Axe", "description": "A simple iron axe. Useful for cutting down trees", "value": 15, "type": "Weapon", "args": [10]},
+    {"name": "Apple", "description": "A tasty apple", "value": 3, "type": "Consumable", "args": [10]},
+    {"name": "Log", "description": "A heavy oak log. Useful for crafting.", "value": 2, "type": "Item"}
+]

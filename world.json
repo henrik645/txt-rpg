@@ -1,0 +1,55 @@
+[
+    [
+        {
+            "name": "Tailor",
+            "description": "You see sewing supplies in the back",
+            "type": "Town",
+            "args": [0, 1, 5],
+            "map": "tailor"
+        },
+        {
+            "name": "Martin's Way",
+            "description": "A wide stone brick road",
+            "type": "Town",
+            "args": [],
+            "map": "path"
+        },
+        {
+            "name": "Blacksmith",
+            "description": "A little stone building. You feel the heat from the forge as soon as you step in.",
+            "type": "Town",
+            "args": [],
+            "map": "smith"
+        }
+    ],
+    [
+        {
+            "name": false
+        },
+        {
+            "name": "Martin's Way",
+            "description": "A wide stone brick road.",
+            "type": "Town",
+            "args": [],
+            "map": "path"
+        },
+        {
+            "name": false
+        }
+    ],
+    [
+        {
+            "name": false
+        },
+        {
+            "name": "Town Square",
+            "description": "A stone brick fountain is located in the middle. You see farmers selling their goods.",
+            "type": "Town",
+            "args": [],
+            "map": "poi"
+        },
+        {
+            "name": false
+        }
+    ]
+]
