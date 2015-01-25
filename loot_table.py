@@ -1,3 +1,5 @@
+import random
+
 class Loot_table():
     def __init__(self, list):
         self.list = list
