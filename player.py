@@ -19,18 +19,24 @@ class Player:
             items_formatted = []
             
             for item in self.inventory:
-                items_formatted.append(item.name)
+                items_formatted.append((item[1].name, item[0]))
             
             print("  - Inventory -  ")
             
             count = 0
             if use_menu:
                 for item in items_formatted:
-                    print(" " + str(count) + " " + item)
+                    if item[1] > 1:
+                        print(" " + str(count) + " " + item[0] + " (" + str(item[1]) + "x)")
+                    else:
+                        print(" " + str(count) + " " + item[0])
                     count += 1
             else:
                 for item in items_formatted:
-                    print(" * " + item)
+                    if item[1] <= 1:
+                        print(" * " + item[0])
+                    else:
+                        print(" * " + item[0] + " (" + str(item[1]) + "x)")
     
         if len(self.armour) > 0:
             items_formatted = []
@@ -47,3 +53,14 @@ class Player:
             else:
                 for item in items_formatted:
                     print(" * " + item)
+        
+    def append_to_inventory(self, append_item):
+        for player_item in self.inventory:
+            if append_item.name == player_item[1].name and append_item.description == player_item[1].description and append_item.value == player_item[1].value:
+                player_item[0] += 1
+                break
+        else:
+            self.inventory.append([1, append_item])
+    
+    def pop_from_inventory(self, pop_int):
+        self.inventory[pop_int][0] -= 1

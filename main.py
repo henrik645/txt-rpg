@@ -37,7 +37,7 @@ def convert_rooms(list):
                 elif room['type'] == "Wilderness" and len(room['type']) >= 1:
                     object_row.append(Wilderness(room['name'], room['description'], {}, Loot_table(room['args'][1]), room['map'])) #room['args'] represents arguments.
                 elif room['type'] == "Resource" and len(room['type']) >= 2:
-                    object_row.append(Resource(room['name'], room['description'], {}, room['args'][1], room['args'][2], room['map'])) #room['args'] represents arguments.
+                    object_row.append(Resource(room['name'], room['description'], {}, items[room['args'][1]], items[room['args'][2]], room['map'])) #room['args'] represents arguments.
                 else:
                     object_row.append(False)
                 if room['args'][0] != []:
@@ -111,15 +111,15 @@ player = Player(town_square) #Starting room is always town square.
 
 refresh = True
 walk_to_left = []
-player.inventory.append(items[3])
-player.inventory.append(items[4])
+player.append_to_inventory(items[3])
+player.append_to_inventory(items[4])
 
 if os.path.isfile("player.json"): #Loads save file.
     file = open("player.json")
     player_data = json.loads(file.read())
     file.close()
     for item in player_data['inventory']:
-        player.inventory.append(items[item])
+        player.append_to_inventory(items[item])
     for item in player_data['armour']:
         player.armour.append(items[item])
     player.money = player_data['gold']
@@ -186,26 +186,26 @@ while True:
         if use.isdigit():
             use = int(use)
             if use >= 0 and use <= len(player.inventory) - 1 and len(player.inventory) > 0:
-                if isinstance(player.inventory[use], Consumable):
-                    if player.hp + player.inventory[use].hp_restore >= player.max_hp:
+                if isinstance(player.inventory[use][1], Consumable):
+                    if player.hp + player.inventory[use][1].hp_restore >= player.max_hp:
                         player.hp = player.max_hp
                         print("You were restored to " + str(player.max_hp) + " HP.")
                     else:
-                        player.hp += player.inventory[use].hp_restore
-                        print("You were restored to " + str(player.hp + player.inventory[use].hp_restore) + " HP.")
-                    player.inventory.pop(use)
-                elif isinstance(player.inventory[use], Armour): 
-                    if player.inventory[use].level_required <= player.level:
-                        player.armour.append(player.inventory[use]) #Appends value to equipment.
-                        item = player.inventory.pop(use) #Removes value from inventory.
+                        player.hp += player.inventory[use][1].hp_restore
+                        print("You were restored to " + str(player.hp) + " HP.")
+                    player.pop_from_inventory(use)
+                elif isinstance(player.inventory[use][1], Armour): 
+                    if player.inventory[use][1].level_required <= player.level:
+                        player.armour.append(player.inventory[use][1]) #Appends value to equipment.
+                        item = player.pop_from_inventory(use) #Removes value from inventory.
                         player.defense += item.defense
                         print("Equipped item.")
                         print("Your Defense level is " + str(player.defense))
                     else:
-                        print("This item can not be used until level " + str(player.inventory[use].level_required) + ".")
-                elif isinstance(player.inventory[use], Weapon) and player.in_fight:
-                    print("You hit the " + fight_monster.name + " with your " + player.inventory[use].name + "!")
-                    fight_monster.hp -= player.inventory[use].damage
+                        print("This item can not be used until level " + str(player.inventory[use][1].level_required) + ".")
+                elif isinstance(player.inventory[use][1], Weapon) and player.in_fight:
+                    print("You hit the " + fight_monster.name + " with your " + player.inventory[use][1].name + "!")
+                    fight_monster.hp -= player.inventory[use][1].damage
                     if fight_monster.hp <= 0:
                         print("The " + fight_monster.name + " died!")
                         player.in_fight = False
@@ -219,16 +219,16 @@ while True:
                             player.killed = True
                         else:
                             print("Your HP: " + str(player.hp) + " / " + str(player.max_hp))
-                elif isinstance(player.inventory[use], Weapon) and isinstance(player.room, Resource):
-                    if player.inventory[use] == player.room.weapon_required:
+                elif isinstance(player.inventory[use][1], Weapon) and isinstance(player.room, Resource):
+                    if player.inventory[use][1] == player.room.weapon_required:
                         print("You got one " + player.room.item.name + ".")
-                        player.inventory.append(player.room.item)
+                        player.append_to_inventory(player.room.item)
                     else:
                         print("You are not able to use this tool here.")
                 else:
                     print("This item can not be equipped.")
             elif use - len(player.inventory) >= 0 and use - len(player.inventory) <= len(player.armour) and len(player.armour) > 0:
-                player.inventory.append(player.armour[use - len(player.inventory)])
+                player.append_to_inventory(player.armour[use - len(player.inventory)])
                 item = player.armour.pop(use - len(player.inventory))
                 player.defense -= item.defense
                 print("You put your " + item.name + " in your inventory.")
@@ -267,7 +267,9 @@ while True:
                     refresh = True
                     break
                 elif player.in_fight:
-                    print("You can not leave while in a fight!")
+                    if len(walk_to_left) == 0: #If player is "running" through, the message will not be displayed, but just the attack message.
+                        print("You can not leave while in a fight!")
+                    break
         try:  #Tries if walk_to (player input) is a number, meaning that the player have chosen to buy an item.
             walk_to = int(walk_to)
             selling_offers = player.room.merchant.get_selling_offers()
@@ -278,7 +280,7 @@ while True:
                 else:
                     print("You have bought: " + selling_offers[walk_to][0].name)
                     player.money -= selling_offers[walk_to][1]
-                    player.inventory.append(selling_offers[walk_to][0])
+                    player.append_to_inventory(selling_offers[walk_to][0])
             else:
                 print("You cannot find this item in this store.")
         except:
