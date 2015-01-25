@@ -76,6 +76,41 @@ while True:
     elif command.lower() == "q":
         print("Quitting...")
         sys.exit()
+    elif command.lower() == "c":
+        line = input("~")
+        line = int(line)
+        if command == "c":
+            for row in rooms:
+                row.insert(line + 1, {'name': False})
+        else:
+            for row in rooms:
+                row.insert(line, {'name': False})
+    elif command.lower() == "d":
+        line = input("~")
+        x_pos, y_pos = line.replace(' ', '').split(',') #strips away all spaces and makes it two strings, x and y.
+        y_pos, x_pos = int(y_pos), int(x_pos)
+        delete = input("Delete room at " + str(x_pos) + "," + str(y_pos) + "? ")
+        if delete == 'y':
+            rooms[y_pos][x_pos] = {'name': False}
+    elif command.lower() == "r":
+        line = input("~")
+        y_pos = int(line)
+        if input("Delete row at " + str(y_pos) + "? ") == "y":
+            if command == "r":
+                for x_pos in range(len(rooms[y_pos])):
+                    rooms[y_pos][x_pos] = {'name': False}
+            else:
+                rooms.pop(y_pos)
+    elif command.lower() == "x":
+        line = input("~")
+        line = int(line)
+        if input("Delete column at " + str(line) + "? ") == "y":
+            if command == "x":
+                for y_pos in range(len(rooms)):
+                    rooms[y_pos][line] = {'name': False}
+            else:
+                for y_pos in range(len(rooms)):
+                    rooms[y_pos].pop(line)
     else:
         x_pos, y_pos = command.replace(' ', '').split(',') #Strips away all spaces and makes it two strings, x and y.
         x_pos = int(x_pos) #Turns the strings
