@@ -55,12 +55,15 @@ while True:
         line = input("~")
         line = int(line)
         if line <= len(rooms):
+            room_width = len(rooms[1])
             if command == "i":
                 rooms.insert(line + 1, [])
+                for i in range(len(rooms[1])):
+                    rooms[line + 1].append({"name": False})
             else:
                 rooms.insert(line, [])
-            for i in range(len(rooms[1])):
-                rooms[line].append({"name": False})
+                for i in range(len(rooms[1])):
+                    rooms[line].append({"name": False})
             # for i in range(len(rooms[line])):
                 # name = input("Name: ")
                 # if name != "":
@@ -173,17 +176,17 @@ while True:
                 type = items[int(item)]['type']
             if type == "Weapon":
                 damage = input("Damage: ")
-                args = [damage]
+                args = [int(damage)]
             elif type == "Consumable":
                 hp_restore = input("HP-Restore: ")
-                args = [hp_restore]
+                args = [int(hp_restore)]
             elif type == "Armour":
                 defense = input("Defense: ")
                 level_required = input("Level: ")
-                args = [defense, level_required]
+                args = [int(defense), int(level_required)]
             elif type == "Item":
                 args = []
-            items[int(item)] = {'name': name, 'description': description, 'value': value, 'type': type, 'args': args}
+            items[int(item)] = {'name': name, 'description': description, 'value': int(value), 'type': type, 'args': args}
     else:
         x_pos, y_pos = command.replace(' ', '').split(',') #Strips away all spaces and makes it two strings, x and y.
         x_pos = int(x_pos) #Turns the strings
@@ -251,7 +254,7 @@ while True:
                     merchant_item = input("Enter item ID: ")
                     if merchant_item == "":
                         break
-                    merchant_items.append(merchant_item)
+                    merchant_items.append(int(merchant_item))
                 args[0] = merchant_items
                 
             current_room['name'] = name
