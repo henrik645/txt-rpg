@@ -3,8 +3,10 @@ import json
 import sys
 
 types = ["Town", "Resource", "Wilderness"]
+item_types = ["Weapon", "Armour", "Consumable", "Item"]
 
 world_file = input("Enter world file: ")
+item_file = input("Enter item file: ")
 if not os.path.isfile(world_file):
     create_file = input(world_file + " not found. Create file [y/n]?")
     if create_file == "y" or create_file == "yes":
@@ -14,8 +16,21 @@ if not os.path.isfile(world_file):
     else:
         sys.exit()
 
+if not os.path.isfile(item_file):
+    create_file = input(item_file + " not found. Create file [y/n]?")
+    if create_file == "y" or create_file == "yes":
+        file = open(item_file, "w")
+        file.write("{}")
+        file.close()
+    else:
+        sys.exit()
+
 file = open(world_file)
 rooms = json.loads(file.read())
+file.close()
+
+file = open(item_file)
+items = json.loads(file.read())
 file.close()
 
 while True:
@@ -72,6 +87,10 @@ while True:
         json_rooms = json.dumps(rooms, indent=4, separators=(',', ': '))
         file.write(json_rooms)
         file.close()
+        file = open(item_file, "w")
+        json_items = json.dumps(items, indent=4, separators=(',', ': '))
+        file.write(json_items)
+        file.close()
         print("File saved.")
     elif command.lower() == "q":
         print("Quitting...")
@@ -111,6 +130,60 @@ while True:
             else:
                 for y_pos in range(len(rooms)):
                     rooms[y_pos].pop(line)
+    elif command.lower() == 'l':
+        print("List of items: ")
+        for i, item in enumerate(items):
+            print(str(i) + ": " + item['name'])
+        item = input("~")
+        if item == "a":
+            items.append({'name': False})
+            item = len(items) - 1
+        if items[int(item)]['name'] is not False:
+            print("Name: " + items[int(item)]['name'])
+            print("Desc: " + items[int(item)]['description'])
+            print("Value: " + str(items[int(item)]['value']))
+            print("Type: " + items[int(item)]['type'])
+            if items[int(item)]['type'] == "Weapon":
+                print("Damage: " + str(items[int(item)]['args'][0]))
+            elif items[int(item)]['type'] == "Armour":
+                print("Defense: " + str(items[int(item)]['args'][0]))
+                print("Level: " + str(items[int(item)]['args'][1]))
+            elif items[int(item)]['type'] == "Consumable":
+                print("HP-Restore: " + str(items[int(item)]['args'][0]))
+            print("")
+        if input("Edit? ") == "y":
+            name = input("Name: ")
+            description = input("Description: ")
+            value = input("Value: ")
+            print("")
+            print("1. Weapon")
+            print("2. Armour")
+            print("3. Consumable")
+            print("4. Item")
+            print("-------------")
+            type = input("Type: ")
+            type = item_types[int(type) - 1]
+            if name == "":
+                name = items[int(item)]['name']
+            if description == '':
+                description = items[int(item)]['description']
+            if value == '':
+                value = items[int(item)]['value']
+            if type == '':
+                type = items[int(item)]['type']
+            if type == "Weapon":
+                damage = input("Damage: ")
+                args = [damage]
+            elif type == "Consumable":
+                hp_restore = input("HP-Restore: ")
+                args = [hp_restore]
+            elif type == "Armour":
+                defense = input("Defense: ")
+                level_required = input("Level: ")
+                args = [defense, level_required]
+            elif type == "Item":
+                args = []
+            items[int(item)] = {'name': name, 'description': description, 'value': value, 'type': type, 'args': args}
     else:
         x_pos, y_pos = command.replace(' ', '').split(',') #Strips away all spaces and makes it two strings, x and y.
         x_pos = int(x_pos) #Turns the strings
