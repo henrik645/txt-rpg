@@ -1,24 +1,54 @@
 [
     [
         {
+            "name": false
+        },
+        {
+            "name": "Black Forest",
+            "description": "The trees are so tightly packed you can barely see sunlight.",
+            "type": "Resource",
+            "args": [[], 6, 4],
+            "map": "wilderness"
+        },
+        {
+            "name": false
+        }
+    ],
+    [
+        {
+            "name": false
+        },
+        {
+            "name": "North Gate",
+            "description": "A high valved gate. Guards are patrolling everyone coming through.",
+            "type": "Wilderness",
+            "args": [[], [{"name": "Wolf", "level": 2, "percent": 0.125}]],
+            "map": "wilderness"
+        },
+        {
+            "name": false
+        }
+    ],
+    [
+        {
             "name": "Tailor",
             "description": "You see sewing supplies in the back",
             "type": "Town",
-            "args": [0, 1, 5],
+            "args": [[0, 1, 5]],
             "map": "tailor"
         },
         {
             "name": "Martin's Way",
             "description": "A wide stone brick road",
             "type": "Town",
-            "args": [],
+            "args": [[]],
             "map": "path"
         },
         {
             "name": "Blacksmith",
             "description": "A little stone building. You feel the heat from the forge as soon as you step in.",
             "type": "Town",
-            "args": [],
+            "args": [[2, 3, 4]],
             "map": "smith"
         }
     ],
@@ -30,7 +60,7 @@
             "name": "Martin's Way",
             "description": "A wide stone brick road.",
             "type": "Town",
-            "args": [],
+            "args": [[]],
             "map": "path"
         },
         {
@@ -45,7 +75,7 @@
             "name": "Town Square",
             "description": "A stone brick fountain is located in the middle. You see farmers selling their goods.",
             "type": "Town",
-            "args": [],
+            "args": [[]],
             "map": "poi"
         },
         {
