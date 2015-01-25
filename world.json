@@ -4,26 +4,20 @@
             "name": false
         },
         {
-            "name": "Black Forest",
             "description": "The trees are so tightly packed you can barely see sunlight.",
-            "type": "Resource",
-            "args": [[], 6, 4],
-            "map": "wilderness"
-        },
-        {
-            "name": false
-        }
-    ],
-    [
-        {
-            "name": false
-        },
-        {
-            "name": "North Gate",
-            "description": "A high valved gate. Guards are patrolling everyone coming through.",
             "type": "Wilderness",
-            "args": [[], [{"name": "Wolf", "level": 2, "percent": 0.125}]],
-            "map": "wilderness"
+            "map": "wilderness",
+            "args": [
+                [],
+                [
+                    {
+                        "percent": 0.125,
+                        "level": 2,
+                        "name": "Wolf"
+                    }
+                ]
+            ],
+            "name": "Black Forest"
         },
         {
             "name": false
@@ -31,25 +25,82 @@
     ],
     [
         {
-            "name": "Tailor",
+            "name": false
+        },
+        {
+            "map": "wilderness",
+            "type": "Resource",
+            "description": "The trees are so tightly packed you can barely see sunlight.",
+            "args": [
+                [],
+                6,
+                4
+            ],
+            "name": "Black Forest"
+        },
+        {
+            "name": false
+        }
+    ],
+    [
+        {
+            "name": false
+        },
+        {
+            "map": "wilderness",
+            "type": "Wilderness",
+            "description": "A high valved gate. Guards are patrolling everyone coming through.",
+            "args": [
+                [],
+                [
+                    {
+                        "percent": 0.125,
+                        "level": 2,
+                        "name": "Wolf"
+                    }
+                ]
+            ],
+            "name": "North Gate"
+        },
+        {
+            "name": false
+        }
+    ],
+    [
+        {
+            "map": "tailor",
+            "type": "Town",
             "description": "You see sewing supplies in the back",
-            "type": "Town",
-            "args": [[0, 1, 5]],
-            "map": "tailor"
+            "args": [
+                [
+                    0,
+                    1,
+                    5
+                ]
+            ],
+            "name": "Tailor"
         },
         {
-            "name": "Martin's Way",
+            "map": "path",
+            "type": "Town",
             "description": "A wide stone brick road",
-            "type": "Town",
-            "args": [[]],
-            "map": "path"
+            "args": [
+                []
+            ],
+            "name": "Martin's Way"
         },
         {
-            "name": "Blacksmith",
+            "map": "smith",
+            "type": "Town",
             "description": "A little stone building. You feel the heat from the forge as soon as you step in.",
-            "type": "Town",
-            "args": [[2, 3, 4]],
-            "map": "smith"
+            "args": [
+                [
+                    2,
+                    3,
+                    4
+                ]
+            ],
+            "name": "Blacksmith"
         }
     ],
     [
@@ -57,11 +108,13 @@
             "name": false
         },
         {
-            "name": "Martin's Way",
+            "map": "path",
+            "type": "Town",
             "description": "A wide stone brick road.",
-            "type": "Town",
-            "args": [[]],
-            "map": "path"
+            "args": [
+                []
+            ],
+            "name": "Martin's Way"
         },
         {
             "name": false
@@ -72,11 +125,13 @@
             "name": false
         },
         {
-            "name": "Town Square",
-            "description": "A stone brick fountain is located in the middle. You see farmers selling their goods.",
+            "map": "poi",
             "type": "Town",
-            "args": [[]],
-            "map": "poi"
+            "description": "A stone brick fountain is located in the middle. You see farmers selling their goods.",
+            "args": [
+                []
+            ],
+            "name": "Town Square"
         },
         {
             "name": false
