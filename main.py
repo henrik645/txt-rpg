@@ -1,5 +1,4 @@
 import sys
-import random
 import math
 import json
 import os.path
@@ -36,14 +35,14 @@ def convert_rooms(list):
                 if room['type'] == "Town":
                     object_row.append(Town(room['name'], room['description'], {}, room['map']))
                 elif room['type'] == "Wilderness" and len(room['type']) >= 1:
-                    object_row.append(Wilderness(room['name'], room['description'], {}, room['args'][1], room['map'])) #room['args'] represents arguments.
+                    object_row.append(Wilderness(room['name'], room['description'], {}, Loot_table(room['args'][1]), room['map'])) #room['args'] represents arguments.
                 elif room['type'] == "Resource" and len(room['type']) >= 2:
                     object_row.append(Resource(room['name'], room['description'], {}, room['args'][1], room['args'][2], room['map'])) #room['args'] represents arguments.
                 else:
                     object_row.append(False)
-                if room['args'] != []:
+                if room['args'][0] != []:
                     object_row[n].merchant = Merchant(1.0, 0.8)
-                    for item in room['args']:
+                    for item in room['args'][0]:
                         object_row[n].merchant.add_item(items[item])
                 
             else:
@@ -220,6 +219,8 @@ while True:
                 print("You put your " + item.name + " in your inventory.")
     elif walk_to == 'm' or walk_to == 'map':
         refresh = True
+    elif walk_to == 'q' or walk_to == 'quit':
+        sys.exit()
     else:
         for dir_abbr, direction in directions.items():
             if direction in player.room.doors:
