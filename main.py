@@ -104,7 +104,6 @@ file = open("world.json", "r")
 rooms = json.loads(file.read())
 file.close()
 rooms = convert_rooms(rooms)
-print(rooms)
 
 town_square = rooms[0][1]
 
@@ -114,6 +113,22 @@ refresh = True
 walk_to_left = []
 player.inventory.append(items[3])
 player.inventory.append(items[4])
+
+if os.path.isfile("player.json"): #Loads save file.
+    file = open("player.json")
+    player_data = json.loads(file.read())
+    file.close()
+    for item in player_data['inventory']:
+        player.inventory.append(items[item])
+    for item in player_data['armour']:
+        player.armour.append(items[item])
+    player.money = player_data['gold']
+    player.in_fight = player_data['in_fight']
+    player.defense = player_data['defense']
+    player.room = rooms[player_data['room'][0]][player_data['room'][1]]
+    player.hp = player_data['hp']
+    player.max_hp = player_data['max_hp']
+    print("Save file loaded.")
 
 while True:
     if player.killed:
@@ -220,6 +235,25 @@ while True:
     elif walk_to == 'm' or walk_to == 'map':
         refresh = True
     elif walk_to == 'q' or walk_to == 'quit':
+        file_inventory = []
+        file_armour = []
+        for player_item in player.inventory:
+            for i, item in enumerate(items):
+                if player_item is item:
+                    file_inventory.append(i)
+        for player_armour in player.armour:
+            for i, item in enumerate(items):
+                if player_armour is item:
+                    file_armour.append(i)
+        for n, row in enumerate(rooms):
+            for i, room in enumerate(row):
+                if room is player.room:
+                    file_room = [n, i]
+        stats = {'hp': player.hp, 'gold': player.money, 'max_hp': player.max_hp, 'defense': player.defense, 'in_fight': player.in_fight, 'room': file_room, 'inventory': file_inventory, 'armour': file_armour}
+        file = open("player.json", "w")
+        file.write(json.dumps(stats, indent=4, separators=(',', ': ')))
+        file.close()
+        print("Saved game data.")
         sys.exit()
     else:
         for dir_abbr, direction in directions.items():
