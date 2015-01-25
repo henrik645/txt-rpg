@@ -63,4 +63,9 @@ class Player:
             self.inventory.append([1, append_item])
     
     def pop_from_inventory(self, pop_int):
-        self.inventory[pop_int][0] -= 1
+        if self.inventory[pop_int][0] <= 1:
+            item = self.inventory.pop(pop_int)
+        else:
+            self.inventory[pop_int][0] -= 1
+            item = self.inventory[pop_int]
+        return item[1]
