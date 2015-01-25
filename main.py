@@ -105,7 +105,7 @@ rooms = json.loads(file.read())
 file.close()
 rooms = convert_rooms(rooms)
 
-town_square = rooms[0][1]
+town_square = rooms[2][5]
 
 player = Player(town_square) #Starting room is always town square.
 
