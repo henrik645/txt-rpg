@@ -1,73 +1,73 @@
 [
     {
+        "value": 5,
         "args": [
             10,
             2
         ],
-        "type": "Armour",
-        "description": "A large leather jacket. The quality isn't that good",
         "name": "Leather Jacket",
-        "value": 5
+        "description": "A large leather jacket. The quality isn't that good",
+        "type": "Armour"
     },
     {
+        "value": 5,
         "args": [
             10,
             0
         ],
-        "type": "Armour",
-        "description": "A pair of leather pants. The quality isn't that good.",
         "name": "Leather pants",
-        "value": 5
+        "description": "A pair of leather pants. The quality isn't that good.",
+        "type": "Armour"
     },
     {
+        "value": 10,
         "args": [
             10
         ],
-        "type": "Weapon",
-        "description": "A simple iron pickaxe",
         "name": "Iron Pickaxe",
-        "value": 10
+        "description": "A simple iron pickaxe",
+        "type": "Weapon"
     },
     {
+        "value": 20,
         "args": [
             15
         ],
-        "type": "Weapon",
-        "description": "A simple iron sword. Useful for slaying enemies",
         "name": "Iron Sword",
-        "value": 20
+        "description": "A simple iron sword. Useful for slaying enemies",
+        "type": "Weapon"
     },
     {
+        "value": 15,
         "args": [
             10
         ],
-        "type": "Weapon",
-        "description": "A simple iron axe. Useful for cutting down trees",
         "name": "Iron Axe",
-        "value": 15
+        "description": "A simple iron axe. Useful for cutting down trees",
+        "type": "Weapon"
     },
     {
+        "value": 3,
         "args": [
             10
         ],
-        "type": "Consumable",
-        "description": "A tasty apple",
         "name": "Apple",
-        "value": 3
+        "description": "A tasty apple",
+        "type": "Consumable"
     },
     {
-        "type": "Item",
-        "description": "A heavy oak log. Useful for crafting.",
+        "value": 2,
         "name": "Log",
-        "value": 2
+        "description": "A heavy oak log. Useful for crafting.",
+        "type": "Item"
     },
     {
+        "value": 5,
         "args": [
-            "20"
+            20
         ],
-        "type": "Consumable",
-        "description": "A tasty banana. Restores HP by 20.",
         "name": "Banana",
-        "value": "5"
+        "description": "A tasty banana. Restores HP by 20.",
+        "type": "Consumable"
     }
 ]
