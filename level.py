@@ -8,6 +8,7 @@ slot_types = ["gloves", "shirt", "pants", "boots", "right", "left", "both"]
 
 world_file = input("Enter world file: ")
 item_file = input("Enter item file: ")
+crafting_file = input("Enter crafting file: ")
 if not os.path.isfile(world_file):
     create_file = input(world_file + " not found. Create file [y/n]?")
     if create_file == "y" or create_file == "yes":
@@ -26,12 +27,25 @@ if not os.path.isfile(item_file):
     else:
         sys.exit()
 
+if not os.path.isfile(crafting_file):
+    create_file = input(crafting_file + " not found. Create file [y/n]?")
+    if create_file == "y" or create_file == "yes":
+        file = open(crafting_file, "w")
+        file.write("[]")
+        file.close()
+    else:
+        sys.exit()
+
 file = open(world_file)
 rooms = json.loads(file.read())
 file.close()
 
 file = open(item_file)
 items = json.loads(file.read())
+file.close()
+
+file = open(crafting_file)
+crafting = json.loads(file.read())
 file.close()
 
 while True:
@@ -95,6 +109,10 @@ while True:
         json_items = json.dumps(items, indent=4, separators=(',', ': '))
         file.write(json_items)
         file.close()
+        file = open(crafting_file, "w")
+        json_crafting = json.dumps(crafting, indent=4, separators=(',', ': '))
+        file.write(json_crafting)
+        file.close()
         print("File saved.")
     elif command.lower() == "q":
         print("Quitting...")
@@ -147,6 +165,9 @@ while True:
                 delete_item = input("~")
                 if input("Delete item " + items[int(delete_item)]['name'] + " [y/n]? ") == "y":
                     items.pop(int(delete_item))
+                    for i, craft in enumerate(crafting):
+                        if craft['output'] == int(delete_item):
+                            crafting.pop(i)
             else:
                 if items[int(item)]['name'] is not False:
                     print("Name: " + items[int(item)]['name'])
@@ -161,6 +182,17 @@ while True:
                         print("Slot: " + str(items[int(item)]['slot']))
                     elif items[int(item)]['type'] == "Consumable":
                         print("HP-Restore: " + str(items[int(item)]['args'][0]))
+                    printed_header = False
+                    for craft in crafting:
+                        if craft['output'] == int(item):
+                            if printed_header == False:
+                                printed_header = True
+                                print("Crafting this item: ")
+                            print("")
+                            print("Item 1: " + str(craft['input'][0]))
+                            print("Item 2: " + str(craft['input'][1]))
+                            break
+                            
                     print("")
                 if input("Edit? ") == "y":
                     name = input("Name: ")
@@ -209,6 +241,13 @@ while True:
                         items[int(item)] = {'name': name, 'description': description, 'value': float(value), 'slot': slot, 'type': type, 'args': args}
                     else:
                         items[int(item)] = {'name': name, 'description': description, 'value': float(value), 'type': type, 'args': args}
+                    if input("Crafted [y/n]? ") == "y":
+                        while True:
+                            item1 = input("Item 1: ")
+                            if item1 == "":
+                                break
+                            item2 = input("Item 2: ")
+                            crafting.append({"input": [item1, item2], "output": int(item)})
     else:
         x_pos, y_pos = command.replace(' ', '').split(',') #Strips away all spaces and makes it two strings, x and y.
         x_pos = int(x_pos) #Turns the strings
