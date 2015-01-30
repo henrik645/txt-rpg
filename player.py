@@ -1,5 +1,5 @@
 class Player:
-    def __init__(self, room, hp=100, max_hp=100, defense=0, money=100, inventory=[], armour=[], killed=False, in_fight=False, level=1):
+    def __init__(self, room, hp=100, max_hp=100, defense=0, money=100, inventory=[], armour={"gloves": None, "shirt": None, "pants": None, "boots": None, "right": None, "left": None, "both": None}, killed=False, in_fight=False, level=1):
         self.room = room
         self.hp = hp
         self.max_hp = max_hp
@@ -16,6 +16,7 @@ class Player:
     
     def view_inventory(self, use_menu=False):
         if len(self.inventory) > 0:
+            if_run = True
             items_formatted = []
             
             for item in self.inventory:
@@ -37,14 +38,19 @@ class Player:
                         print(" * " + item[0])
                     else:
                         print(" * " + item[0] + " (" + str(item[1]) + "x)")
-    
-        if len(self.armour) > 0:
-            items_formatted = []
-            
-            for item in self.armour:
+        else:
+            if_run = False
+        items_formatted = []
+        item_list = []
+        for item in self.armour.values():
+            if item is not None:
                 items_formatted.append(item.name)
+                item_list.append((item.slot, item))
             
-            print("")
+        if len(items_formatted) > 0:
+            if2_run = True
+            if if_run:
+                print("")
             print("  - Equipment -  ")
             
             if use_menu:
@@ -53,6 +59,12 @@ class Player:
             else:
                 for item in items_formatted:
                     print(" * " + item)
+        
+            return item_list
+        else:
+            if2_run = False
+        if if_run == False and if2_run == False:
+            print("You do not have any items in your inventory.")
         
     def append_to_inventory(self, append_item):
         for player_item in self.inventory:

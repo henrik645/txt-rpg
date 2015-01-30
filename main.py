@@ -71,9 +71,9 @@ def convert_items(list):
     object_list = []
     for item in list:
         if item['type'] == 'Weapon' and item['args'][0] is not None:
-            object_list.append(Weapon(item['name'], item['description'], item['args'][0], item['value']))
+            object_list.append(Weapon(item['name'], item['description'], item['slot'], item['args'][0], item['value']))
         elif item['type'] == 'Armour' and item['args'][0] is not None and item['args'][1] is not None:
-            object_list.append(Armour(item['name'], item['description'], item['value'], item['args'][0], item['args'][1]))
+            object_list.append(Armour(item['name'], item['description'], item['slot'], item['value'], item['args'][0], item['args'][1]))
         elif item['type'] == 'Item':
             object_list.append(Item(item['name'], item['description'], item['value']))
         elif item['type'] == 'Consumable' and item['args'][0] is not None:
@@ -111,23 +111,30 @@ player = Player(town_square) #Starting room is always town square.
 
 refresh = True
 walk_to_left = []
-player.append_to_inventory(items[3])
-player.append_to_inventory(items[4])
+# player.append_to_inventory(items[3])
+# player.append_to_inventory(items[4])
 
 if os.path.isfile("player.json"): #Loads save file.
     file = open("player.json")
     player_data = json.loads(file.read())
     file.close()
-    for item in player_data['inventory']:
-        player.append_to_inventory(items[item])
-    for item in player_data['armour']:
-        player.armour.append(items[item])
+    print(player_data['inventory'])
+    for item, number in player_data['inventory'].items():
+        for z in range(number):
+            player.append_to_inventory(items[int(item)])
+    for key, item in player_data['armour'].items():
+        print(key, item)
+        if item is not None:
+            player.armour[key] = items[item]
+        else:
+            player.armour[key] = None
     player.money = player_data['gold']
     player.in_fight = player_data['in_fight']
     player.defense = player_data['defense']
     player.room = rooms[player_data['room'][0]][player_data['room'][1]]
     player.hp = player_data['hp']
     player.max_hp = player_data['max_hp']
+    player.level = player_data['level']
     print("Save file loaded.")
 
 while True:
@@ -177,10 +184,11 @@ while True:
         print("Gold: " + str(player.money))
         print("HP: " + str(player.hp))
         print("Defense: " + str(player.defense))
+        print("Level: " + str(player.level))
     elif walk_to == 'i' or walk_to == 'inventory':
         player.view_inventory()
     elif walk_to == 'u' or walk_to == 'use':
-        player.view_inventory(True)
+        armour_list = player.view_inventory(True)
         print("Enter number to use or equip.")
         use = input("~")
         if use.isdigit():
@@ -196,11 +204,15 @@ while True:
                     player.pop_from_inventory(use)
                 elif isinstance(player.inventory[use][1], Armour): 
                     if player.inventory[use][1].level_required <= player.level:
-                        player.armour.append(player.inventory[use][1]) #Appends value to equipment.
-                        item = player.pop_from_inventory(use) #Removes value from inventory.
-                        player.defense += item.defense
-                        print("Equipped item.")
-                        print("Your Defense level is " + str(player.defense))
+                        if player.armour[player.inventory[use][1].slot] is None:
+                            player.armour[player.inventory[use][1].slot] = player.inventory[use][1]
+                            item = player.pop_from_inventory(use) #Removes value from inventory.
+                            player.defense += item.defense
+                            print("Equipped item.")
+                            print("Your Defense level is " + str(player.defense))
+                        else:
+                            print("You are already wearing " + player.inventory[use][1].slot + ".")
+                        #player.armour.append(player.inventory[use][1]) #Appends value to equipment.
                     else:
                         print("This item can not be used until level " + str(player.inventory[use][1].level_required) + ".")
                 elif isinstance(player.inventory[use][1], Weapon) and player.in_fight:
@@ -228,28 +240,32 @@ while True:
                 else:
                     print("This item can not be equipped.")
             elif use - len(player.inventory) >= 0 and use - len(player.inventory) <= len(player.armour) and len(player.armour) > 0:
-                player.append_to_inventory(player.armour[use - len(player.inventory)])
-                item = player.armour.pop(use - len(player.inventory))
+                player.append_to_inventory(armour_list[use - len(player.inventory)][1])
+                item = armour_list[use - len(player.inventory)][1]
+                player.armour[armour_list[use - len(player.inventory)][0]] = None
                 player.defense -= item.defense
                 print("You put your " + item.name + " in your inventory.")
     elif walk_to == 'm' or walk_to == 'map':
         refresh = True
     elif walk_to == 'q' or walk_to == 'quit':
-        file_inventory = []
-        file_armour = []
+        file_inventory = {}
+        file_armour = {}
         for player_item in player.inventory:
             for i, item in enumerate(items):
-                if player_item is item:
-                    file_inventory.append(i)
-        for player_armour in player.armour:
+                if player_item[1] is item:
+                    file_inventory[i] = player_item[0]
+        for key, player_armour in player.armour.items():
             for i, item in enumerate(items):
                 if player_armour is item:
-                    file_armour.append(i)
+                    file_armour[key] = i
+                    break
+                else:
+                    file_armour[key] = None
         for n, row in enumerate(rooms):
             for i, room in enumerate(row):
                 if room is player.room:
                     file_room = [n, i]
-        stats = {'hp': player.hp, 'gold': player.money, 'max_hp': player.max_hp, 'defense': player.defense, 'in_fight': player.in_fight, 'room': file_room, 'inventory': file_inventory, 'armour': file_armour}
+        stats = {'hp': player.hp, 'gold': player.money, 'max_hp': player.max_hp, 'defense': player.defense, 'in_fight': player.in_fight, 'room': file_room, 'inventory': file_inventory, 'armour': file_armour, "level": player.level}
         file = open("player.json", "w")
         file.write(json.dumps(stats, indent=4, separators=(',', ': ')))
         file.close()
