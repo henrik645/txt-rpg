@@ -84,6 +84,17 @@ def convert_items(list):
     
     return(object_list)
 
+def convert_crafts(list, items):
+    object_list = []
+    for item in list:
+        item['output'] = items[item['output']]
+        object_input = []
+        for input_item in item['input']:
+            input_item = items[input_item]
+            object_input.append(input_item)
+        object_list.append({'output': item['output'], 'input': object_input})
+    return object_list
+
 def monster_hp(level):
     monster_hp_level = math.floor((level / 2) ** 2 + 20)
     return monster_hp_level
@@ -121,6 +132,16 @@ items = convert_items(items)
 if not os.path.isfile("world.json"):
     print("No world file found.")
     sys.exit()
+
+if not os.path.isfile("crafting.json"):
+    print("No crafting file found.")
+    sys.exit()
+
+file = open("crafting.json", "r")
+crafting = json.loads(file.read())
+file.close()
+
+crafting = convert_crafts(crafting, items)
     
 file = open("world.json", "r")
 rooms = json.loads(file.read())
@@ -192,6 +213,9 @@ while True:
                 for i, monster in enumerate(monsters):
                     if monster['name'] == chosen_monster['name']:
                         fight_monster = Monster(chosen_monster['name'], monster_hp(chosen_monster['level']), monster_hp_per_hit(chosen_monster['level']))
+        elif isinstance(player.room, Resource):
+            print("")
+            print("Some " + player.room.item.name.lower() + " can be acquired here.")
         if hasattr(player.room, 'merchant') and not player.in_fight:
             print("")
             print("A merchant is present.")
@@ -269,6 +293,13 @@ while True:
                             print("Your HP: " + str(player.hp) + " / " + str(player.max_hp))
                 elif isinstance(player.inventory[use][1], Weapon) and isinstance(player.room, Resource):
                     if player.inventory[use][1] == player.room.weapon_required:
+                        sys.stdout.write("You swing your " + player.inventory[use][1].name)
+                        sys.stdout.flush()
+                        for i in range(3):
+                            sys.stdout.write(".")
+                            sys.stdout.flush()
+                            time.sleep(0.75)
+                        print("")
                         print("You got one " + player.room.item.name + ".")
                         player.append_to_inventory(player.room.item)
                     else:
@@ -307,6 +338,24 @@ while True:
         file.close()
         print("Saved game data.")
         sys.exit()
+    elif walk_to == 'c' or walk_to == 'craft':
+        player.view_inventory(True)
+        print("")
+        print("Combine items: ")
+        item1_raw = input("Item 1: ")
+        if item1_raw != "":
+            item2_raw = input("Item 2: ")
+            item1 = player.inventory[int(item1_raw)][1]
+            item2 = player.inventory[int(item2_raw)][1]
+            for craft in crafting:
+                if (item1 == craft['input'][0] and item2 == craft['input'][1]) or (item1 == craft['input'][1] and item2 == craft['input'][0]):
+                    player.pop_from_inventory(int(item1_raw))
+                    player.pop_from_inventory(int(item2_raw))
+                    player.append_to_inventory(craft['output'])
+                    print("Crafted one " + craft['output'].name + ".")
+                    break
+            else:
+                print("There are no recipies matching your items.")
     else:
         for dir_abbr, direction in directions.items():
             if direction in player.room.doors:
