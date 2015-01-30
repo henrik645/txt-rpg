@@ -4,6 +4,7 @@ import sys
 
 types = ["Town", "Resource", "Wilderness"]
 item_types = ["Weapon", "Armour", "Consumable", "Item"]
+slot_types = ["gloves", "shirt", "pants", "boots", "right", "left", "both"]
 
 world_file = input("Enter world file: ")
 item_file = input("Enter item file: ")
@@ -11,7 +12,7 @@ if not os.path.isfile(world_file):
     create_file = input(world_file + " not found. Create file [y/n]?")
     if create_file == "y" or create_file == "yes":
         file = open(world_file, "w")
-        file.write("{}")
+        file.write('[\n\t[\n\t\t{\n\t\t\t"name": false\n\t\t}\n\t]\n]')
         file.close()
     else:
         sys.exit()
@@ -35,7 +36,7 @@ file.close()
 
 while True:
     sys.stdout.write("  ")
-    for i in range(len(rooms[1])):
+    for i in range(len(rooms[0])):
         sys.stdout.write(str(i) + " ")
     print(" ")
     for i, row in enumerate(rooms):
@@ -55,14 +56,14 @@ while True:
         line = input("~")
         line = int(line)
         if line <= len(rooms):
-            room_width = len(rooms[1])
+            room_width = len(rooms[0])
             if command == "i":
                 rooms.insert(line + 1, [])
-                for i in range(len(rooms[1])):
+                for i in range(len(rooms[0])):
                     rooms[line + 1].append({"name": False})
             else:
                 rooms.insert(line, [])
-                for i in range(len(rooms[1])):
+                for i in range(len(rooms[0])):
                     rooms[line].append({"name": False})
             # for i in range(len(rooms[line])):
                 # name = input("Name: ")
@@ -138,55 +139,76 @@ while True:
         for i, item in enumerate(items):
             print(str(i) + ": " + item['name'])
         item = input("~")
-        if item == "a":
-            items.append({'name': False})
-            item = len(items) - 1
-        if items[int(item)]['name'] is not False:
-            print("Name: " + items[int(item)]['name'])
-            print("Desc: " + items[int(item)]['description'])
-            print("Value: " + str(items[int(item)]['value']))
-            print("Type: " + items[int(item)]['type'])
-            if items[int(item)]['type'] == "Weapon":
-                print("Damage: " + str(items[int(item)]['args'][0]))
-            elif items[int(item)]['type'] == "Armour":
-                print("Defense: " + str(items[int(item)]['args'][0]))
-                print("Level: " + str(items[int(item)]['args'][1]))
-            elif items[int(item)]['type'] == "Consumable":
-                print("HP-Restore: " + str(items[int(item)]['args'][0]))
-            print("")
-        if input("Edit? ") == "y":
-            name = input("Name: ")
-            description = input("Description: ")
-            value = input("Value: ")
-            print("")
-            print("1. Weapon")
-            print("2. Armour")
-            print("3. Consumable")
-            print("4. Item")
-            print("-------------")
-            type = input("Type: ")
-            type = item_types[int(type) - 1]
-            if name == "":
-                name = items[int(item)]['name']
-            if description == '':
-                description = items[int(item)]['description']
-            if value == '':
-                value = items[int(item)]['value']
-            if type == '':
-                type = items[int(item)]['type']
-            if type == "Weapon":
-                damage = input("Damage: ")
-                args = [int(damage)]
-            elif type == "Consumable":
-                hp_restore = input("HP-Restore: ")
-                args = [int(hp_restore)]
-            elif type == "Armour":
-                defense = input("Defense: ")
-                level_required = input("Level: ")
-                args = [int(defense), int(level_required)]
-            elif type == "Item":
-                args = []
-            items[int(item)] = {'name': name, 'description': description, 'value': int(value), 'type': type, 'args': args}
+        if item != "":
+            if item == "a":
+                items.append({'name': False})
+                item = len(items) - 1
+            if item == "d":
+                delete_item = input("~")
+                if input("Delete item " + items[int(delete_item)]['name'] + " [y/n]? ") == "y":
+                    items.pop(int(delete_item))
+            else:
+                if items[int(item)]['name'] is not False:
+                    print("Name: " + items[int(item)]['name'])
+                    print("Desc: " + items[int(item)]['description'])
+                    print("Value: " + str(items[int(item)]['value']))
+                    print("Type: " + items[int(item)]['type'])
+                    if items[int(item)]['type'] == "Weapon":
+                        print("Damage: " + str(items[int(item)]['args'][0]))
+                    elif items[int(item)]['type'] == "Armour":
+                        print("Defense: " + str(items[int(item)]['args'][0]))
+                        print("Level: " + str(items[int(item)]['args'][1]))
+                        print("Slot: " + str(items[int(item)]['slot']))
+                    elif items[int(item)]['type'] == "Consumable":
+                        print("HP-Restore: " + str(items[int(item)]['args'][0]))
+                    print("")
+                if input("Edit? ") == "y":
+                    name = input("Name: ")
+                    description = input("Description: ")
+                    value = input("Value: ")
+                    print("")
+                    print("1. Weapon")
+                    print("2. Armour")
+                    print("3. Consumable")
+                    print("4. Item")
+                    print("-------------")
+                    type = input("Type: ")
+                    type = item_types[int(type) - 1]
+                    if name == "":
+                        name = items[int(item)]['name']
+                    if description == '':
+                        description = items[int(item)]['description']
+                    if value == '':
+                        value = items[int(item)]['value']
+                    if type == '':
+                        type = items[int(item)]['type']
+                    if type == "Weapon":
+                        damage = input("Damage: ")
+                        args = [int(damage)]
+                    elif type == "Consumable":
+                        hp_restore = input("HP-Restore: ")
+                        args = [int(hp_restore)]
+                    elif type == "Armour":
+                        defense = input("Defense: ")
+                        level_required = input("Level: ")
+                        args = [int(defense), int(level_required)]
+                        print("")
+                        print("1. Gloves")
+                        print("2. Shirt")
+                        print("3. Pants")
+                        print("4. Boots")
+                        print("5. Right")
+                        print("6. Left")
+                        print("7. Both")
+                        print("-------------")
+                        slot = input("Slot: ")
+                        slot = slot_types[int(slot) - 1]
+                    elif type == "Item":
+                        args = []
+                    if type == "Armour":
+                        items[int(item)] = {'name': name, 'description': description, 'value': float(value), 'slot': slot, 'type': type, 'args': args}
+                    else:
+                        items[int(item)] = {'name': name, 'description': description, 'value': float(value), 'type': type, 'args': args}
     else:
         x_pos, y_pos = command.replace(' ', '').split(',') #Strips away all spaces and makes it two strings, x and y.
         x_pos = int(x_pos) #Turns the strings
@@ -200,7 +222,7 @@ while True:
             if current_room['args'][0] != []:
                 print("Merchant items: ")
                 for item in current_room['args'][0]:
-                    print(item)
+                    print(str(item) + ": " + items[item]['name'])
             if current_room['type'] == "Wilderness":
                 print("Monster table: ")
                 for monster in current_room['args'][1]:
@@ -250,6 +272,8 @@ while True:
                 args = [[], item, required]
             if input("Add merchant? ") == "y":
                 merchant_items = []
+                for i, item in enumerate(items):
+                    print(str(i) + ": " + item['name'])
                 while True:
                     merchant_item = input("Enter item ID: ")
                     if merchant_item == "":
