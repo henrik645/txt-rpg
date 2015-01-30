@@ -2,6 +2,7 @@ import sys
 import math
 import json
 import os.path
+import time
 
 from room import Room, Town, Wilderness, Resource
 from player import Player
@@ -81,7 +82,28 @@ def convert_items(list):
         else:
             object_list.append(False)
     
-    return(object_list)      
+    return(object_list)
+
+def monster_hp(level):
+    monster_hp_level = math.floor((level / 2) ** 2 + 20)
+    return monster_hp_level
+    
+def monster_hp_per_hit(level):
+    monster_hp_hit = math.floor(((level / 2) ** 2 + 10 / 2))
+    return monster_hp_hit
+
+def monster_xp(level):
+    monster_xp_level = math.floor((level / 2) ** 2 + 100)
+    return monster_xp_level
+
+def player_xp(level):
+    level += 1 # +1 Since this is the xp required for the next level.
+    player_xp_required = math.floor((level ** 2 + 100))
+    return player_xp_required
+    
+def player_hp(level):
+    player_hp_level = math.floor((level / 2) ** 2 + 25)
+    return player_hp_level
     
 directions = {'n': 'north', 'e': 'east', 's': 'south', 'w': 'west'}
 
@@ -118,12 +140,10 @@ if os.path.isfile("player.json"): #Loads save file.
     file = open("player.json")
     player_data = json.loads(file.read())
     file.close()
-    print(player_data['inventory'])
     for item, number in player_data['inventory'].items():
         for z in range(number):
             player.append_to_inventory(items[int(item)])
     for key, item in player_data['armour'].items():
-        print(key, item)
         if item is not None:
             player.armour[key] = items[item]
         else:
@@ -135,14 +155,25 @@ if os.path.isfile("player.json"): #Loads save file.
     player.hp = player_data['hp']
     player.max_hp = player_data['max_hp']
     player.level = player_data['level']
+    player.xp = player_data['xp']
     print("Save file loaded.")
+    time.sleep(0.5)
 
 while True:
+    if player.xp >= player_xp(player.level):
+        print("You leveled up to level " + str(player.level + 1) + "!")
+        player.level += 1
+        player.xp -= player_xp(player.level)
+        player.max_hp = player_hp(player.level)
+        player.hp = player.max_hp
+        print("Max HP: " + str(player.max_hp))
+        
     if player.killed:
         player.killed = False
         player.go_to_room(town_square) #Town square is respawn point
         player.hp = player.max_hp
         print("You respawned at " + player.room.name + ".")
+        time.sleep(2)
         print("")
         refresh = True
     if refresh:
@@ -160,7 +191,7 @@ while True:
                 player.in_fight = True
                 for i, monster in enumerate(monsters):
                     if monster['name'] == chosen_monster['name']:
-                        fight_monster = Monster(chosen_monster['name'], monsters[i]['max_hp'], monsters[i]['hp_per_hit'])
+                        fight_monster = Monster(chosen_monster['name'], monster_hp(chosen_monster['level']), monster_hp_per_hit(chosen_monster['level']))
         if hasattr(player.room, 'merchant') and not player.in_fight:
             print("")
             print("A merchant is present.")
@@ -182,9 +213,10 @@ while True:
         walk_to = walk_to_left.pop(0)
     if walk_to == 'g' or walk_to == 'gold':
         print("Gold: " + str(player.money))
-        print("HP: " + str(player.hp))
+        print("HP: " + str(player.hp) + " / " + str(player.max_hp))
         print("Defense: " + str(player.defense))
         print("Level: " + str(player.level))
+        print("XP: " + str(player.xp) + " / " + str(player_xp(player.level)))
     elif walk_to == 'i' or walk_to == 'inventory':
         player.view_inventory()
     elif walk_to == 'u' or walk_to == 'use':
@@ -220,11 +252,15 @@ while True:
                     fight_monster.hp -= player.inventory[use][1].damage
                     if fight_monster.hp <= 0:
                         print("The " + fight_monster.name + " died!")
+                        print("")
                         player.in_fight = False
+                        xp_gained = monster_xp(chosen_monster['level'])
+                        player.xp += xp_gained
+                        print("You gained " + str(xp_gained) + " XP.")
                     else:                        
                         print(fight_monster.name + " HP: " + str(fight_monster.hp) + " / " + str(fight_monster.max_hp))
                         print("The " + fight_monster.name + " hit you!")
-                        player.hp -= fight_monster.hp_per_hit
+                        player.hp -= fight_monster.hp_per_hit - player.defense * 0.10
                         if player.hp <= 0:
                             print("The " + fight_monster.name + " killed you!")
                             player.in_fight = False
@@ -265,7 +301,7 @@ while True:
             for i, room in enumerate(row):
                 if room is player.room:
                     file_room = [n, i]
-        stats = {'hp': player.hp, 'gold': player.money, 'max_hp': player.max_hp, 'defense': player.defense, 'in_fight': player.in_fight, 'room': file_room, 'inventory': file_inventory, 'armour': file_armour, "level": player.level}
+        stats = {'hp': player.hp, 'gold': player.money, 'max_hp': player.max_hp, 'defense': player.defense, 'in_fight': player.in_fight, 'room': file_room, 'inventory': file_inventory, 'armour': file_armour, "level": player.level, 'xp': player.xp}
         file = open("player.json", "w")
         file.write(json.dumps(stats, indent=4, separators=(',', ': ')))
         file.close()
