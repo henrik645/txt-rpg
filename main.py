@@ -121,7 +121,7 @@ def player_hp(level):
     
 directions = {'n': 'north', 'e': 'east', 's': 'south', 'w': 'west'}
 
-monsters = [{'name': 'Wolf', 'max_hp': 25, 'hp_per_hit': 5}]
+monsters = [{'name': 'Wolf', 'max_hp': 25, 'hp_per_hit': 5}, {'name': 'Scorpion', 'max_hp': 25, 'hp_per_hit': 5}]
 
 if not os.path.isfile("items.json"):
     print("No item file found.")
