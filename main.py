@@ -345,27 +345,30 @@ while True:
         item1_raw = input("Item 1: ")
         if item1_raw != "":
             item2_raw = input("Item 2: ")
-            item1 = player.inventory[int(item1_raw)][1]
-            item2 = player.inventory[int(item2_raw)][1]
-            for craft in crafting:
-                if (item1 == craft['input'][0] and item2 == craft['input'][1]) or (item1 == craft['input'][1] and item2 == craft['input'][0]):
-                    player.pop_from_inventory(int(item1_raw))
-                    player.pop_from_inventory(int(item2_raw))
-                    player.append_to_inventory(craft['output'])
-                    print("Crafted one " + craft['output'].name + ".")
-                    break
-            else:
-                print("There are no recipies matching your items.")
+            if isinstance(item1_raw, int) and isinstance(item2_raw, int):
+                item1 = player.inventory[int(item1_raw)][1]
+                item2 = player.inventory[int(item2_raw)][1]
+                for craft in crafting:
+                    if (item1 == craft['input'][0] and item2 == craft['input'][1]) or (item1 == craft['input'][1] and item2 == craft['input'][0]):
+                        player.pop_from_inventory(int(item1_raw))
+                        player.pop_from_inventory(int(item2_raw))
+                        player.append_to_inventory(craft['output'])
+                        print("Crafted one " + craft['output'].name + ".")
+                        break
+                else:
+                    print("There are no recipies matching your items.")
     else:
         for dir_abbr, direction in directions.items():
             if direction in player.room.doors:
                 if walk_to == dir_abbr and player.in_fight == False:
                     player.go_to_room(player.room.doors[direction])
-                    refresh = True
+                    if len(walk_to_left) <= 0:
+                        refresh = True
                     break
-                elif walk_to.lower() == direction:
+                elif walk_to.lower() == direction and player.in_fight == False:
                     player.go_to_room(player.room.doors[direction])
-                    refresh = True
+                    if len(walk_to_left) <= 0:
+                        refresh = True
                     break
                 elif player.in_fight:
                     if len(walk_to_left) == 0: #If player is "running" through, the message will not be displayed, but just the attack message.
