@@ -99,29 +99,29 @@ def convert_crafts(list, items):
     return object_list
 
 def monster_hp(level):
-    monster_hp_level = math.floor((level / 2) ** 2 + 20)
+    monster_hp_level = math.floor((level * 1.2) ** 2 + 20)
     return monster_hp_level
     
 def monster_hp_per_hit(level):
-    monster_hp_hit = math.floor(((level / 2) ** 2 + 10 / 2))
+    monster_hp_hit = math.floor(((level / 2) ** 2 + 10))
     return monster_hp_hit
 
 def monster_xp(level):
-    monster_xp_level = math.floor((level / 2) ** 2 + 100)
+    monster_xp_level = math.floor((level * 2) ** 2 + 25)
     return monster_xp_level
 
 def player_xp(level):
     level += 1 # +1 Since this is the xp required for the next level.
-    player_xp_required = math.floor((level ** 2 + 100))
+    player_xp_required = math.floor((level * 5) ** 2 + 100)
     return player_xp_required
     
 def player_hp(level):
-    player_hp_level = math.floor((level / 2) ** 2 + 25)
+    player_hp_level = math.floor((level * 1.3) ** 2 + 25)
     return player_hp_level
     
 directions = {'n': 'north', 'e': 'east', 's': 'south', 'w': 'west'}
 
-monsters = [{'name': 'Wolf', 'max_hp': 25, 'hp_per_hit': 5}, {'name': 'Scorpion', 'max_hp': 25, 'hp_per_hit': 5}]
+#monsters = [{'name': 'Wolf', 'max_hp': 25, 'hp_per_hit': 5}, {'name': 'Scorpion', 'max_hp': 25, 'hp_per_hit': 5}]
 
 if not os.path.isfile("items.json"):
     print("No item file found.")
@@ -185,8 +185,9 @@ if os.path.isfile("player.json"): #Loads save file.
     player.defense = player_data['defense']
     player.room = rooms[player_data['room'][0]][player_data['room'][1]]
     player.hp = player_data['hp']
-    player.max_hp = player_data['max_hp']
+    #player.max_hp = player_data['max_hp']
     player.level = player_data['level']
+    player.max_hp = player_hp(player.level)
     player.xp = player_data['xp']
     print("Save file loaded.")
     time.sleep(0.5)
@@ -225,14 +226,13 @@ while True:
             print("")
             print("Your HP: " + str(player.hp) + " / " + str(player.max_hp))
             print(fight_monster.name + " HP: " + str(fight_monster.hp) + " / " + str(fight_monster.max_hp))
+        print(map_refresh)
         if isinstance(player.room, Wilderness) and map_refresh == False:
             chosen_monster = player.room.monster_percent.choose_from_list()
             if chosen_monster is not None:
                 print("You have been attacked by a level " + str(chosen_monster['level']) + " " + str(chosen_monster['name']) + "!")
                 player.in_fight = True
-                for i, monster in enumerate(monsters):
-                    if monster['name'] == chosen_monster['name']:
-                        fight_monster = Monster(chosen_monster['name'], monster_hp(chosen_monster['level']), monster_hp_per_hit(chosen_monster['level']))
+                fight_monster = Monster(chosen_monster['name'], monster_hp(chosen_monster['level']), monster_hp_per_hit(chosen_monster['level']))
         elif isinstance(player.room, Resource):
             print("")
             print("Some " + player.room.item.name.lower() + " can be acquired here.")
@@ -251,7 +251,7 @@ while True:
             print("Exits:")
             for exit in player.room.doors:
                 print(exit.title() + " (" + player.room.doors[exit].name + ")")
-        map_refresh == False
+    map_refresh = False
     if walk_to_left == []:
         walk_to = input(">")
         walk_to = walk_to.lower()
