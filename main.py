@@ -7,7 +7,7 @@ import time
 from room import Room, Town, Wilderness, Resource
 from player import Player
 from item import Item, Weapon, Armour, Consumable
-from merchant import Merchant
+from merchant import Merchant, Banker
 from monster import Monster 
 from loot_table import Loot_table
 
@@ -45,6 +45,9 @@ def convert_rooms(list):
                     object_row[n].merchant = Merchant(1.0, 0.8)
                     for item in room['args'][0]:
                         object_row[n].merchant.add_item(items[item])
+                
+                if room['banker'] != False:
+                    object_row[n].banker = Banker()
                 
             else:
                 object_row.append(False)
@@ -150,12 +153,16 @@ rooms = convert_rooms(rooms)
 
 town_square = rooms[2][5]
 
+#town_square.banker = Banker()
+
 player = Player(town_square) #Starting room is always town square.
 
 refresh = True
 walk_to_left = []
 # player.append_to_inventory(items[3])
 # player.append_to_inventory(items[4])
+
+player.bank[items[4]] = 1
 
 if os.path.isfile("player.json"): #Loads save file.
     file = open("player.json")
@@ -221,6 +228,11 @@ while True:
             print("A merchant is present.")
             view_selling_offers(player.room)
             print("Enter number to buy.")
+            print("")
+            print("You have " + str(player.money) + " G left.")
+        if hasattr(player.room, 'banker') and not player.in_fight:
+            print("")
+            print("A banker is present.")
         if not player.in_fight:
             print("")
             print("Exits:")
@@ -235,6 +247,8 @@ while True:
             walk_to = walk_to[:1]
     else:
         walk_to = walk_to_left.pop(0)
+        if len(walk_to_left) <= 0:
+            refresh = True
     if walk_to == 'g' or walk_to == 'gold':
         print("Gold: " + str(player.money))
         print("HP: " + str(player.hp) + " / " + str(player.max_hp))
@@ -345,18 +359,87 @@ while True:
         item1_raw = input("Item 1: ")
         if item1_raw != "":
             item2_raw = input("Item 2: ")
-            if isinstance(item1_raw, int) and isinstance(item2_raw, int):
-                item1 = player.inventory[int(item1_raw)][1]
-                item2 = player.inventory[int(item2_raw)][1]
-                for craft in crafting:
-                    if (item1 == craft['input'][0] and item2 == craft['input'][1]) or (item1 == craft['input'][1] and item2 == craft['input'][0]):
-                        player.pop_from_inventory(int(item1_raw))
-                        player.pop_from_inventory(int(item2_raw))
-                        player.append_to_inventory(craft['output'])
-                        print("Crafted one " + craft['output'].name + ".")
-                        break
+            if item1_raw.isdigit() and item2_raw.isdigit():
+                if int(item1_raw) <= len(player.inventory) and int(item2_raw) <= len(player.inventory):
+                    item1 = player.inventory[int(item1_raw)][1]
+                    item2 = player.inventory[int(item2_raw)][1]
+                    for craft in crafting:
+                        if (item1 == craft['input'][0] and item2 == craft['input'][1]) or (item1 == craft['input'][1] and item2 == craft['input'][0]):
+                            player.pop_from_inventory(int(item1_raw))
+                            player.pop_from_inventory(int(item2_raw))
+                            player.append_to_inventory(craft['output'])
+                            print("Crafted one " + craft['output'].name + ".")
+                            break
+                    else:
+                        print("There are no recipies matching your items.")
+    elif (walk_to == 'b' or walk_to == 'bank') and hasattr(player.room, 'banker'):
+        while True:
+            armour_list = player.view_inventory(True)
+            if len(player.bank) > 0:
+                print("")
+                print("  - Bank items -  ")
+            items_formatted, bank_list = player.room.banker.get_items(player)
+            for i, item in enumerate(items_formatted):
+                if item[1] > 1:
+                    print(" " + str(i + len(player.inventory) + len(armour_list)) + " " + item[0] + " (" + str(item[1]) + "x)")
                 else:
-                    print("There are no recipies matching your items.")
+                    print(" " + str(i + len(player.inventory) + len(armour_list)) + " " + item[0])
+
+            if len(player.bank) > 0:
+                print("Enter number to withdraw or deposit or press enter when done.")
+            else:
+                print("Enter number to deposit or press enter when done.")
+            
+            item = input("~")
+            if item == "":
+                refresh = True
+                break
+            if item.isdigit():
+                item = int(item)
+                if item >= len(player.inventory) + len(armour_list): #Meaning that the player has chosen to withdraw an item.
+                    item = item - (len(player.inventory) + len(armour_list))
+                    item = bank_list[item]
+                    if player.bank[item] > 1: #Meaning that it can be subtracted
+                        amount_items = input("How many: ")
+                        if amount_items.isdigit():
+                            amount_items = int(amount_items)
+                        else:
+                            amount_items = 1
+                        if player.bank[item] < amount_items:
+                            amount_items = player.bank[item]
+                        if player.bank[item] > amount_items:
+                            player.bank[item] -= amount_items
+                            for i in range(amount_items):
+                                player.append_to_inventory(item)
+                        else:
+                            for i in range(player.bank[item]):
+                                player.append_to_inventory(item)
+                            player.bank.pop(item)
+                    else: #Meaning we need to pop it entirely.
+                        player.append_to_inventory(item)
+                        player.bank.pop(item)
+                    print("You withdrew your " + item.name + " and put it in your inventory.")
+                elif item >= len(player.inventory):
+                    print("You can not deposit directly from your equipment.")
+                elif item < len(player.inventory):
+                    item_inventory = player.inventory[item][1]
+                    if player.inventory[item][0] > 1:
+                        amount_items = input("How many: ")
+                        if amount_items.isdigit():
+                            amount_items = int(amount_items)
+                        else:
+                            amount_items = 1
+                        if amount_items > player.inventory[item][0]:
+                            amount_items = player.inventory[item][0]
+                    if item_inventory in player.bank: #If item already is in bank, and this item can be stacked on top of that.
+                        player.bank[item_inventory] += amount_items
+                    else: #This item is new to this bank
+                        player.bank[item_inventory] = amount_items
+                    for i in range(amount_items):
+                        player.pop_from_inventory(item)
+                    print("You deposited your " + item_inventory.name + " to your bank account.")
+                print("")
+            refresh = False
     else:
         for dir_abbr, direction in directions.items():
             if direction in player.room.doors:

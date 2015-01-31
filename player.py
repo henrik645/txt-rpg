@@ -1,5 +1,5 @@
 class Player:
-    def __init__(self, room, hp=100, max_hp=100, defense=0, money=100, inventory=[], armour={"gloves": None, "shirt": None, "pants": None, "boots": None, "right": None, "left": None, "both": None}, killed=False, in_fight=False, level=1, xp=0):
+    def __init__(self, room, hp=100, max_hp=100, defense=0, money=100, inventory=[], armour={"gloves": None, "shirt": None, "pants": None, "boots": None, "right": None, "left": None, "both": None}, bank={}, killed=False, in_fight=False, level=1, xp=0):
         self.room = room
         self.hp = hp
         self.max_hp = max_hp
@@ -11,6 +11,7 @@ class Player:
         self.in_fight = in_fight
         self.level = level
         self.xp = xp
+        self.bank = bank
     
     def go_to_room(self, room):
         self.room = room

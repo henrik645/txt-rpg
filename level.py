@@ -262,6 +262,8 @@ while True:
                 print("Merchant items: ")
                 for item in current_room['args'][0]:
                     print(str(item) + ": " + items[item]['name'])
+            if current_room['banker'] == True:
+                print("A banker is added.")
             if current_room['type'] == "Wilderness":
                 print("Monster table: ")
                 for monster in current_room['args'][1]:
@@ -309,7 +311,8 @@ while True:
                 item = input("Enter item ID: ")
                 required = input("Enter tool ID: ")
                 args = [[], item, required]
-            if input("Add merchant? ") == "y":
+            input_y = input("Add merchant? ")
+            if input_y == "y":
                 merchant_items = []
                 for i, item in enumerate(items):
                     print(str(i) + ": " + item['name'])
@@ -319,6 +322,13 @@ while True:
                         break
                     merchant_items.append(int(merchant_item))
                 args[0] = merchant_items
+            elif input_y == "n":
+                current_room['args'][0] = []
+            input_y = input("Add banker? ")
+            if input_y == "y":
+                current_room['banker'] = True
+            elif input_y == "n":
+                current_room['banker'] = False
                 
             current_room['name'] = name
             current_room['description'] = description
