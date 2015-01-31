@@ -162,7 +162,7 @@ walk_to_left = []
 # player.append_to_inventory(items[3])
 # player.append_to_inventory(items[4])
 
-player.bank[items[4]] = 1
+#player.bank[items[4]] = 1
 
 if os.path.isfile("player.json"): #Loads save file.
     file = open("player.json")
@@ -176,6 +176,9 @@ if os.path.isfile("player.json"): #Loads save file.
             player.armour[key] = items[item]
         else:
             player.armour[key] = None
+    for item, number in player_data['bank'].items():
+        item = items[int(item)]
+        player.bank[item] = number
     player.money = player_data['gold']
     player.in_fight = player_data['in_fight']
     player.defense = player_data['defense']
@@ -331,6 +334,7 @@ while True:
     elif walk_to == 'q' or walk_to == 'quit':
         file_inventory = {}
         file_armour = {}
+        file_bank = {}
         for player_item in player.inventory:
             for i, item in enumerate(items):
                 if player_item[1] is item:
@@ -346,7 +350,11 @@ while True:
             for i, room in enumerate(row):
                 if room is player.room:
                     file_room = [n, i]
-        stats = {'hp': player.hp, 'gold': player.money, 'max_hp': player.max_hp, 'defense': player.defense, 'in_fight': player.in_fight, 'room': file_room, 'inventory': file_inventory, 'armour': file_armour, "level": player.level, 'xp': player.xp}
+        for item, number in player.bank.items():
+            for i, item_items in enumerate(items):
+                if item == item_items:
+                    file_bank[i] = number
+        stats = {'hp': player.hp, 'gold': player.money, 'max_hp': player.max_hp, 'defense': player.defense, 'in_fight': player.in_fight, 'room': file_room, 'inventory': file_inventory, 'armour': file_armour, "level": player.level, 'xp': player.xp, 'bank': file_bank}
         file = open("player.json", "w")
         file.write(json.dumps(stats, indent=4, separators=(',', ': ')))
         file.close()
