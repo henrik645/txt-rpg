@@ -48,18 +48,24 @@ file = open(crafting_file)
 crafting = json.loads(file.read())
 file.close()
 
+height = len(rooms)
+width = len(rooms[0])
+
 while True:
+    spaces = len(str(len(rooms)))
     sys.stdout.write("  ")
     for i in range(len(rooms[0])):
+        for x in range(spaces - len(str(i))):
+            sys.stdout.write(" ")
         sys.stdout.write(str(i) + " ")
     print(" ")
     for i, row in enumerate(rooms):
         sys.stdout.write(str(i))
         for room in row:
             if room['name'] is not False:
-                sys.stdout.write(" *")
+                sys.stdout.write(" " * spaces  + "*")
             else:
-                sys.stdout.write("  ")
+                sys.stdout.write(" " + " " * spaces)
         print(" ")
 
     print(" ")
@@ -73,11 +79,11 @@ while True:
             room_width = len(rooms[0])
             if command == "i":
                 rooms.insert(line + 1, [])
-                for i in range(len(rooms[0])):
+                for i in range(width):
                     rooms[line + 1].append({"name": False})
             else:
                 rooms.insert(line, [])
-                for i in range(len(rooms[0])):
+                for i in range(width):
                     rooms[line].append({"name": False})
             # for i in range(len(rooms[line])):
                 # name = input("Name: ")
@@ -324,9 +330,11 @@ while True:
             elif type == "Town":
                 args = [[]]
             elif type == "Resource":
+                for i, item in enumerate(items):
+                    print(str(i) + ": " + item['name'])
                 item = input("Enter item ID: ")
                 required = input("Enter tool ID: ")
-                args = [[], item, required]
+                args = [[], int(item), int(required)]
             input_y = input("Add merchant? ")
             if input_y == "y":
                 merchant_items = []
@@ -339,7 +347,10 @@ while True:
                     merchant_items.append(int(merchant_item))
                 args[0] = merchant_items
             elif input_y == "n":
+                if not 'args' in current_room:
+                    current_room['args'] = {}
                 current_room['args'][0] = []
+
             input_y = input("Add banker? ")
             if input_y == "y":
                 current_room['banker'] = True
