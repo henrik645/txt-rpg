@@ -75,7 +75,7 @@ def convert_items(list):
     object_list = []
     for item in list:
         if item['type'] == 'Weapon' and item['args'][0] is not None:
-            object_list.append(Weapon(item['name'], item['description'], item['slot'], item['args'][0], item['value']))
+            object_list.append(Weapon(item['name'], item['description'], item['slot'], item['args'][0], item['value'], item['args'][1]))
         elif item['type'] == 'Armour' and item['args'][0] is not None and item['args'][1] is not None:
             object_list.append(Armour(item['name'], item['description'], item['slot'], item['value'], item['args'][0], item['args'][1]))
         elif item['type'] == 'Item':
@@ -158,6 +158,7 @@ town_square = rooms[2][5]
 player = Player(town_square) #Starting room is always town square.
 
 refresh = True
+map_refresh = False
 walk_to_left = []
 # player.append_to_inventory(items[3])
 # player.append_to_inventory(items[4])
@@ -189,6 +190,9 @@ if os.path.isfile("player.json"): #Loads save file.
     player.xp = player_data['xp']
     print("Save file loaded.")
     time.sleep(0.5)
+else:
+    player.hp = player_hp(player.level)
+    player.max_hp = player_hp(player.level)
 
 while True:
     if player.xp >= player_xp(player.level):
@@ -215,7 +219,13 @@ while True:
         print("")
         print(player.room.name)
         print(player.room.description)
-        if isinstance(player.room, Wilderness):
+        if player.in_fight:
+            print("")
+            print("You are battling a level " + str(chosen_monster['level']) + " " + fight_monster.name + ".")
+            print("")
+            print("Your HP: " + str(player.hp) + " / " + str(player.max_hp))
+            print(fight_monster.name + " HP: " + str(fight_monster.hp) + " / " + str(fight_monster.max_hp))
+        if isinstance(player.room, Wilderness) and map_refresh == False:
             chosen_monster = player.room.monster_percent.choose_from_list()
             if chosen_monster is not None:
                 print("You have been attacked by a level " + str(chosen_monster['level']) + " " + str(chosen_monster['name']) + "!")
@@ -241,6 +251,7 @@ while True:
             print("Exits:")
             for exit in player.room.doors:
                 print(exit.title() + " (" + player.room.doors[exit].name + ")")
+        map_refresh == False
     if walk_to_left == []:
         walk_to = input(">")
         walk_to = walk_to.lower()
@@ -250,8 +261,8 @@ while True:
             walk_to = walk_to[:1]
     else:
         walk_to = walk_to_left.pop(0)
-        if len(walk_to_left) <= 0:
-            refresh = True
+        # if len(walk_to_left) <= 0:
+            # refresh = True
     if walk_to == 'g' or walk_to == 'gold':
         print("Gold: " + str(player.money))
         print("HP: " + str(player.hp) + " / " + str(player.max_hp))
@@ -288,26 +299,26 @@ while True:
                         #player.armour.append(player.inventory[use][1]) #Appends value to equipment.
                     else:
                         print("This item can not be used until level " + str(player.inventory[use][1].level_required) + ".")
-                elif isinstance(player.inventory[use][1], Weapon) and player.in_fight:
-                    print("You hit the " + fight_monster.name + " with your " + player.inventory[use][1].name + "!")
-                    fight_monster.hp -= player.inventory[use][1].damage
-                    if fight_monster.hp <= 0:
-                        print("The " + fight_monster.name + " died!")
-                        print("")
-                        player.in_fight = False
-                        xp_gained = monster_xp(chosen_monster['level'])
-                        player.xp += xp_gained
-                        print("You gained " + str(xp_gained) + " XP.")
-                    else:                        
-                        print(fight_monster.name + " HP: " + str(fight_monster.hp) + " / " + str(fight_monster.max_hp))
-                        print("The " + fight_monster.name + " hit you!")
-                        player.hp -= fight_monster.hp_per_hit - player.defense * 0.10
-                        if player.hp <= 0:
-                            print("The " + fight_monster.name + " killed you!")
-                            player.in_fight = False
-                            player.killed = True
-                        else:
-                            print("Your HP: " + str(player.hp) + " / " + str(player.max_hp))
+                # elif isinstance(player.inventory[use][1], Weapon) and player.in_fight:
+                    # print("You hit the " + fight_monster.name + " with your " + player.inventory[use][1].name + "!")
+                    # fight_monster.hp -= player.inventory[use][1].damage
+                    # if fight_monster.hp <= 0:
+                        # print("The " + fight_monster.name + " died!")
+                        # print("")
+                        # player.in_fight = False
+                        # xp_gained = monster_xp(chosen_monster['level'])
+                        # player.xp += xp_gained
+                        # print("You gained " + str(xp_gained) + " XP.")
+                    # else:                        
+                        # print(fight_monster.name + " HP: " + str(fight_monster.hp) + " / " + str(fight_monster.max_hp))
+                        # print("The " + fight_monster.name + " hit you!")
+                        # player.hp -= fight_monster.hp_per_hit - player.defense * 0.10
+                        # if player.hp <= 0:
+                            # print("The " + fight_monster.name + " killed you!")
+                            # player.in_fight = False
+                            # player.killed = True
+                        # else:
+                            # print("Your HP: " + str(player.hp) + " / " + str(player.max_hp))
                 elif isinstance(player.inventory[use][1], Weapon) and isinstance(player.room, Resource):
                     if player.inventory[use][1] == player.room.weapon_required:
                         sys.stdout.write("You swing your " + player.inventory[use][1].name)
@@ -321,16 +332,29 @@ while True:
                         player.append_to_inventory(player.room.item)
                     else:
                         print("You are not able to use this tool here.")
+                elif isinstance(player.inventory[use][1], Weapon):
+                    if player.inventory[use][1].level_required <= player.level:
+                        if player.armour[player.inventory[use][1].slot] is None:
+                            player.armour[player.inventory[use][1].slot] = player.inventory[use][1]
+                            item = player.pop_from_inventory(use) #Removes value from inventory.
+                            print("Equipped item.")
+                            print("Your Damage level is " + str(item.damage) + ".")
+                        else:
+                            print("You are already wearing this type of item.")
+                    else:
+                        print("This item can not be used until level " + str(player.inventory[use][1].level_required) + ".")
                 else:
                     print("This item can not be equipped.")
-            elif use - len(player.inventory) >= 0 and use - len(player.inventory) <= len(player.armour) and len(player.armour) > 0:
-                player.append_to_inventory(armour_list[use - len(player.inventory)][1])
+            elif use - len(player.inventory) >= 0 and use - len(player.inventory) <= len(player.armour) and len(armour_list) > 0:
                 item = armour_list[use - len(player.inventory)][1]
-                player.armour[armour_list[use - len(player.inventory)][0]] = None
-                player.defense -= item.defense
+                player.append_to_inventory(armour_list[use - len(player.inventory)][1])
+                player.armour[item.slot] = None
+                if isinstance(item, Armour):
+                    player.defense -= item.defense
                 print("You put your " + item.name + " in your inventory.")
     elif walk_to == 'm' or walk_to == 'map':
         refresh = True
+        map_refresh = True
     elif walk_to == 'q' or walk_to == 'quit':
         file_inventory = {}
         file_armour = {}
@@ -448,18 +472,44 @@ while True:
                     print("You deposited your " + item_inventory.name + " to your bank account.")
                 print("")
             refresh = False
+    elif walk_to == "a" or walk_to == "attack":
+        if player.armour['right'] is None:
+            player.armour['right'] = items[8] #Items 8 is bare hands, which is a weapon only used internally.
+        if player.in_fight:
+            print("You hit the " + fight_monster.name + " with your " + player.armour['right'].name + "!")
+            fight_monster.hp -= player.armour['right'].damage
+            if fight_monster.hp <= 0:
+                print("The " + fight_monster.name + " died!")
+                print("")
+                player.in_fight = False
+                xp_gained = monster_xp(chosen_monster['level'])
+                player.xp += xp_gained
+                print("You gained " + str(xp_gained) + " XP.")
+            else:                        
+                print(fight_monster.name + " HP: " + str(fight_monster.hp) + " / " + str(fight_monster.max_hp))
+                print("The " + fight_monster.name + " hit you!")
+                player.hp -= fight_monster.hp_per_hit - player.defense * 0.10
+                if player.hp <= 0:
+                    print("The " + fight_monster.name + " killed you!")
+                    player.in_fight = False
+                    player.killed = True
+                else:
+                    print("Your HP: " + str(player.hp) + " / " + str(player.max_hp))
+        else:
+            print("You can not attack while not in a fight.")
+            
+        if player.armour['right'] == items[8]:
+            player.armour['right'] = None
     else:
         for dir_abbr, direction in directions.items():
             if direction in player.room.doors:
                 if walk_to == dir_abbr and player.in_fight == False:
                     player.go_to_room(player.room.doors[direction])
-                    if len(walk_to_left) <= 0:
-                        refresh = True
+                    refresh = True
                     break
                 elif walk_to.lower() == direction and player.in_fight == False:
                     player.go_to_room(player.room.doors[direction])
-                    if len(walk_to_left) <= 0:
-                        refresh = True
+                    refresh = True
                     break
                 elif player.in_fight:
                     if len(walk_to_left) == 0: #If player is "running" through, the message will not be displayed, but just the attack message.

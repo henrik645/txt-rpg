@@ -16,9 +16,10 @@ class Item:
                 self.value = value
 
 class Weapon(Item):
-    def __init__(self, name, description, slot, damage=0, value=0):
+    def __init__(self, name, description, slot, damage=0, value=0, level_required=1):
         self.damage = damage
         self.slot = slot
+        self.level_required = level_required
         super().__init__(name, description, value)
 
 class Consumable(Item):
