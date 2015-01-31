@@ -176,6 +176,8 @@ while True:
                     print("Type: " + items[int(item)]['type'])
                     if items[int(item)]['type'] == "Weapon":
                         print("Damage: " + str(items[int(item)]['args'][0]))
+                        print("Level: " + str(items[int(item)]['args'][0]))
+                        print("Slot: " + str(items[int(item)]['slot']))
                     elif items[int(item)]['type'] == "Armour":
                         print("Defense: " + str(items[int(item)]['args'][0]))
                         print("Level: " + str(items[int(item)]['args'][1]))
@@ -216,7 +218,19 @@ while True:
                         type = items[int(item)]['type']
                     if type == "Weapon":
                         damage = input("Damage: ")
-                        args = [int(damage)]
+                        level_required = input("Level: ")
+                        print("")
+                        print("1. Gloves")
+                        print("2. Shirt")
+                        print("3. Pants")
+                        print("4. Boots")
+                        print("5. Right")
+                        print("6. Left")
+                        print("7. Both")
+                        print("-------------")
+                        slot = input("Slot: ")
+                        slot = slot_types[int(slot) - 1]
+                        args = [int(damage), int(level_required)]
                     elif type == "Consumable":
                         hp_restore = input("HP-Restore: ")
                         args = [int(hp_restore)]
@@ -238,6 +252,8 @@ while True:
                     elif type == "Item":
                         args = []
                     if type == "Armour":
+                        items[int(item)] = {'name': name, 'description': description, 'value': float(value), 'slot': slot, 'type': type, 'args': args}
+                    elif type == "Weapon":
                         items[int(item)] = {'name': name, 'description': description, 'value': float(value), 'slot': slot, 'type': type, 'args': args}
                     else:
                         items[int(item)] = {'name': name, 'description': description, 'value': float(value), 'type': type, 'args': args}
