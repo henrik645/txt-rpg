@@ -16,24 +16,160 @@
             "name": false
         },
         {
-            "map": "wilderness",
-            "description": "The trees are so tightly packed you can barely see sunlight.",
-            "banker": false,
-            "name": "Black Forest",
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
             "args": [
                 [],
                 [
                     {
-                        "name": "Wolf",
-                        "percent": 0.125,
-                        "level": 2
+                        "level": 5,
+                        "name": "Scorpion",
+                        "percent": 0.75
                     }
                 ]
             ],
-            "type": "Wilderness"
+            "description": "You notice there are no veins on the walls.",
+            "type": "Wilderness",
+            "name": "Mine",
+            "banker": false,
+            "map": "wilderness"
+        },
+        {
+            "args": [
+                [],
+                10,
+                2
+            ],
+            "description": "Iron veins line the walls.",
+            "type": "Resource",
+            "name": "Mine",
+            "banker": false,
+            "map": "wilderness"
+        }
+    ],
+    [
+        {
+            "name": false
         },
         {
             "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "args": [
+                [],
+                [
+                    {
+                        "level": 2,
+                        "name": "Wolf",
+                        "percent": 0.125
+                    }
+                ]
+            ],
+            "description": "The trees are so tightly packed you can barely see sunlight.",
+            "type": "Wilderness",
+            "name": "Black Forest",
+            "banker": false,
+            "map": "wilderness"
+        },
+        {
+            "args": [
+                [],
+                [
+                    {
+                        "level": 2,
+                        "name": "Wolf",
+                        "percent": 0.125
+                    }
+                ]
+            ],
+            "description": "This little trail leads to the Knightscastle Copper Mine.",
+            "type": "Wilderness",
+            "name": "Mine Trail",
+            "banker": false,
+            "map": "wilderness"
+        },
+        {
+            "args": [
+                [
+                    2
+                ]
+            ],
+            "description": "A little wooden hut shelters the ladder from rain.",
+            "type": "Town",
+            "name": "Knightscastle Mine",
+            "banker": false,
+            "map": "wilderness"
+        },
+        {
+            "args": [
+                []
+            ],
+            "description": "The wooden ladder shakes as you climb it.",
+            "type": "Town",
+            "name": "Mine",
+            "banker": false,
+            "map": "wilderness"
+        },
+        {
+            "args": [
+                [],
+                9,
+                2
+            ],
+            "description": "Copper veins line the walls. The air is stale.",
+            "type": "Resource",
+            "name": "Mine",
+            "banker": false,
+            "map": "wilderness"
+        },
+        {
+            "args": [
+                [],
+                9,
+                2
+            ],
+            "description": "Copper veins line the walls. The air is stale.",
+            "map": "wilderness",
+            "type": "Resource",
+            "name": "Mine",
+            "banker": false
+        },
+        {
+            "args": [
+                [],
+                9,
+                2
+            ],
+            "description": "Copper veins line the walls. The air is stale.",
+            "map": "wilderness",
+            "type": "Resource",
+            "name": "Mine",
+            "banker": false
         },
         {
             "name": false
@@ -56,16 +192,95 @@
             "name": false
         },
         {
+            "args": [
+                [],
+                [
+                    {
+                        "level": 2,
+                        "name": "Wolf",
+                        "percent": 0.125
+                    }
+                ]
+            ],
             "map": "wilderness",
-            "description": "The trees are so tightly packed you can barely see sunlight.",
-            "banker": false,
+            "type": "Wilderness",
             "name": "Black Forest",
+            "description": "The trees are so tightly packed you can barely see sunlight.",
+            "banker": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "args": [
+                [],
+                9,
+                2
+            ],
+            "description": "Copper ore lines the walls.",
+            "type": "Resource",
+            "name": "Mine",
+            "banker": false,
+            "map": "wilderness"
+        },
+        {
+            "name": false
+        }
+    ],
+    [
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
             "args": [
                 [],
                 6,
                 4
             ],
-            "type": "Resource"
+            "map": "wilderness",
+            "type": "Resource",
+            "name": "Black Forest",
+            "description": "The trees are so tightly packed you can barely see sunlight.",
+            "banker": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
         },
         {
             "name": false
@@ -91,21 +306,36 @@
             "name": false
         },
         {
-            "map": "wilderness",
-            "description": "A high valved gate. Guards are patrolling everyone coming through.",
-            "banker": false,
-            "name": "North Gate",
             "args": [
                 [],
                 [
                     {
+                        "level": 2,
                         "name": "Wolf",
-                        "percent": 0.125,
-                        "level": 2
+                        "percent": 0.125
                     }
                 ]
             ],
-            "type": "Wilderness"
+            "map": "wilderness",
+            "type": "Wilderness",
+            "name": "North Gate",
+            "description": "A high valved gate. Guards are patrolling everyone coming through.",
+            "banker": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
         },
         {
             "name": false
@@ -128,10 +358,6 @@
             "name": false
         },
         {
-            "map": "tailor",
-            "description": "You see sewing supplies in the back",
-            "banker": false,
-            "name": "Tailor",
             "args": [
                 [
                     0,
@@ -139,23 +365,23 @@
                     5
                 ]
             ],
-            "type": "Town"
+            "map": "tailor",
+            "type": "Town",
+            "name": "Tailor",
+            "description": "You see sewing supplies in the back",
+            "banker": false
         },
         {
-            "map": "path",
-            "description": "A wide stone brick road",
-            "banker": false,
-            "name": "Martin's Way",
             "args": [
                 []
             ],
-            "type": "Town"
+            "map": "path",
+            "type": "Town",
+            "name": "Martin's Way",
+            "description": "A wide stone brick road",
+            "banker": false
         },
         {
-            "map": "smith",
-            "description": "A little stone building. You feel the heat from the forge as soon as you step in.",
-            "banker": false,
-            "name": "Blacksmith",
             "args": [
                 [
                     2,
@@ -163,7 +389,26 @@
                     4
                 ]
             ],
-            "type": "Town"
+            "map": "smith",
+            "type": "Town",
+            "name": "Blacksmith",
+            "description": "A little stone building. You feel the heat from the forge as soon as you step in.",
+            "banker": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
         },
         {
             "name": false
@@ -171,201 +416,246 @@
     ],
     [
         {
-            "map": "wilderness",
-            "description": "A strong fish smell greets you to this harbour. Ships are coming and going, all under the squeals of sea mews.",
-            "banker": false,
-            "name": "Knightsbridge Harbour",
             "args": [
                 []
             ],
-            "type": "Town"
-        },
-        {
-            "name": false
-        },
-        {
-            "name": false
-        },
-        {
             "map": "wilderness",
+            "type": "Town",
+            "name": "Knightsbridge Harbour",
+            "description": "A strong fish smell greets you to this harbour. Ships are coming and going, all under the squeals of sea mews.",
+            "banker": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "args": [
+                []
+            ],
+            "name": "Bank",
+            "type": "Town",
             "description": "Red ropes divide the small room into lines. The tellers are located behind large glass booths.",
             "doors": [
                 "south"
             ],
             "banker": true,
-            "name": "Bank",
-            "args": [
-                []
-            ],
-            "type": "Town"
+            "map": "wilderness"
         },
         {
-            "map": "wilderness",
+            "args": [
+                [
+                    5,
+                    7
+                ]
+            ],
+            "name": "Groceries",
+            "type": "Town",
             "description": "A large grocery store. The fresh fruit is located in front of the oak counter.",
             "doors": [
                 "east"
             ],
             "banker": false,
-            "name": "Groceries",
-            "args": [
-                [
-                    5,
-                    7
-                ]
-            ],
-            "type": "Town"
+            "map": "wilderness"
         },
         {
+            "args": [
+                []
+            ],
             "map": "path",
-            "description": "A wide stone brick road.",
-            "banker": false,
+            "type": "Town",
             "name": "Martin's Way",
-            "args": [
-                []
-            ],
-            "type": "Town"
-        },
-        {
-            "name": false
-        },
-        {
-            "name": false
-        }
-    ],
-    [
-        {
-            "map": "wilderness",
-            "description": "A strong fish smell greets you to this harbour. Ships are coming and going, all under the squeals of sea mews.",
-            "banker": false,
-            "name": "Knightsbridge Harbour",
-            "args": [
-                []
-            ],
-            "type": "Town"
-        },
-        {
-            "map": "wilderness",
-            "description": "A wide stone brick road. You smell fish from the nearby harbour.",
-            "banker": false,
-            "name": "Harbour Road",
-            "args": [
-                []
-            ],
-            "type": "Town"
-        },
-        {
-            "map": "wilderness",
-            "description": "A wide stone brick road. You smell fish from the nearby harbour.",
-            "banker": false,
-            "name": "Harbour Road",
-            "args": [
-                []
-            ],
-            "type": "Town"
-        },
-        {
-            "map": "wilderness",
-            "description": "A wide stone brick road. You smell fish from the nearby harbour.",
-            "banker": false,
-            "name": "Harbour Road",
-            "args": [
-                []
-            ],
-            "type": "Town"
-        },
-        {
-            "map": "wilderness",
-            "description": "A wide stone brick road. You smell fish from the nearby harbour.",
-            "banker": false,
-            "name": "Harbour Road",
-            "args": [
-                []
-            ],
-            "type": "Town"
-        },
-        {
-            "map": "wilderness",
-            "description": "A stone brick fountain is located in the middle. You see farmers selling their goods.",
-            "banker": false,
-            "name": "Town Square",
-            "args": [
-                []
-            ],
-            "type": "Town"
-        },
-        {
-            "map": "wilderness",
             "description": "A wide stone brick road.",
-            "banker": false,
-            "name": "Harbour Road",
-            "args": [
-                []
-            ],
-            "type": "Town"
+            "banker": false
         },
         {
-            "map": "wilderness",
-            "description": "A high valved gate. Two guards are patrolling here.",
-            "banker": false,
-            "name": "East Gate",
-            "args": [
-                []
-            ],
-            "type": "Town"
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
         }
     ],
     [
         {
-            "map": "wilderness",
-            "description": "A strong fish smell greets you to this harbour. Ships are coming and going, all under the squeals of sea mews.",
-            "banker": false,
-            "name": "Knightsbridge Harbour",
             "args": [
                 []
             ],
-            "type": "Town"
-        },
-        {
-            "name": false
-        },
-        {
-            "name": false
-        },
-        {
-            "name": false
-        },
-        {
             "map": "wilderness",
-            "description": "Farmers from around the area gather here to sell their goods.",
-            "banker": false,
-            "name": "Southern Market",
+            "type": "Town",
+            "name": "Knightsbridge Harbour",
+            "description": "A strong fish smell greets you to this harbour. Ships are coming and going, all under the squeals of sea mews.",
+            "banker": false
+        },
+        {
+            "args": [
+                []
+            ],
+            "map": "wilderness",
+            "type": "Town",
+            "name": "Harbour Road",
+            "description": "A wide stone brick road. You smell fish from the nearby harbour.",
+            "banker": false
+        },
+        {
+            "args": [
+                []
+            ],
+            "map": "wilderness",
+            "type": "Town",
+            "name": "Harbour Road",
+            "description": "A wide stone brick road. You smell fish from the nearby harbour.",
+            "banker": false
+        },
+        {
+            "args": [
+                []
+            ],
+            "map": "wilderness",
+            "type": "Town",
+            "name": "Harbour Road",
+            "description": "A wide stone brick road. You smell fish from the nearby harbour.",
+            "banker": false
+        },
+        {
+            "args": [
+                []
+            ],
+            "map": "wilderness",
+            "type": "Town",
+            "name": "Harbour Road",
+            "description": "A wide stone brick road. You smell fish from the nearby harbour.",
+            "banker": false
+        },
+        {
+            "args": [
+                []
+            ],
+            "map": "wilderness",
+            "type": "Town",
+            "name": "Town Square",
+            "description": "A stone brick fountain is located in the middle. You see farmers selling their goods.",
+            "banker": false
+        },
+        {
+            "args": [
+                []
+            ],
+            "map": "wilderness",
+            "type": "Town",
+            "name": "Harbour Road",
+            "description": "A wide stone brick road.",
+            "banker": false
+        },
+        {
+            "args": [
+                []
+            ],
+            "map": "wilderness",
+            "type": "Town",
+            "name": "East Gate",
+            "description": "A high valved gate. Two guards are patrolling here.",
+            "banker": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        }
+    ],
+    [
+        {
+            "args": [
+                []
+            ],
+            "map": "wilderness",
+            "type": "Town",
+            "name": "Knightsbridge Harbour",
+            "description": "A strong fish smell greets you to this harbour. Ships are coming and going, all under the squeals of sea mews.",
+            "banker": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
             "args": [
                 [
                     5,
                     7
                 ]
             ],
-            "type": "Town"
+            "map": "wilderness",
+            "type": "Town",
+            "name": "Southern Market",
+            "description": "Farmers from around the area gather here to sell their goods.",
+            "banker": false
         },
         {
-            "map": "wilderness",
-            "description": "Farmers from around the area gather here to sell their goods.",
-            "banker": false,
-            "name": "Southern Market",
             "args": [
                 []
             ],
-            "type": "Town"
+            "map": "wilderness",
+            "type": "Town",
+            "name": "Southern Market",
+            "description": "Farmers from around the area gather here to sell their goods.",
+            "banker": false
         },
         {
-            "map": "wilderness",
-            "description": "Farmers from around the area gather here to sell their goods.",
-            "banker": false,
-            "name": "Southern Market",
             "args": [
                 []
             ],
-            "type": "Town"
+            "map": "wilderness",
+            "type": "Town",
+            "name": "Southern Market",
+            "description": "Farmers from around the area gather here to sell their goods.",
+            "banker": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
         },
         {
             "name": false
@@ -388,14 +678,29 @@
             "name": false
         },
         {
-            "map": "wilderness",
-            "description": "A high valved gate. Two guards are patrolling here.",
-            "banker": false,
-            "name": "South Gate",
             "args": [
                 []
             ],
-            "type": "Town"
+            "map": "wilderness",
+            "type": "Town",
+            "name": "South Gate",
+            "description": "A high valved gate. Two guards are patrolling here.",
+            "banker": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
+        },
+        {
+            "name": false
         },
         {
             "name": false
