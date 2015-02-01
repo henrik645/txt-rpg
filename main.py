@@ -226,7 +226,6 @@ while True:
             print("")
             print("Your HP: " + str(player.hp) + " / " + str(player.max_hp))
             print(fight_monster.name + " HP: " + str(fight_monster.hp) + " / " + str(fight_monster.max_hp))
-        print(map_refresh)
         if isinstance(player.room, Wilderness) and map_refresh == False:
             chosen_monster = player.room.monster_percent.choose_from_list()
             if chosen_monster is not None:
