@@ -1,5 +1,5 @@
 class Player:
-    def __init__(self, room, hp=100, max_hp=100, defense=0, money=100, inventory=[], armour={"gloves": None, "shirt": None, "pants": None, "boots": None, "right": None, "left": None, "both": None}, bank={}, killed=False, in_fight=False, level=1, xp=0):
+    def __init__(self, room, hp=100, max_hp=100, defense=0, money=100, inventory=[], armour={"gloves": None, "shirt": None, "pants": None, "boots": None, "right": None, "left": None, "both": None}, bank={}, killed=False, in_fight=False, level=1, xp=0, active_quests={}, finished_quests=[]):
         self.room = room
         self.hp = hp
         self.max_hp = max_hp
@@ -12,6 +12,8 @@ class Player:
         self.level = level
         self.xp = xp
         self.bank = bank
+        self.active_quests = active_quests
+        self.finished_quests = finished_quests
     
     def go_to_room(self, room):
         self.room = room

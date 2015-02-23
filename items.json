@@ -1,106 +1,106 @@
 [
     {
+        "type": "Armour",
+        "name": "Leather Jacket",
         "args": [
             10,
             2
         ],
-        "name": "Leather Jacket",
-        "slot": "shirt",
-        "type": "Armour",
         "value": 5,
-        "description": "A large leather jacket. The quality isn't that good"
+        "description": "A large leather jacket. The quality isn't that good",
+        "slot": "shirt"
     },
     {
+        "type": "Armour",
+        "name": "Leather pants",
         "args": [
             10,
             0
         ],
-        "name": "Leather pants",
-        "slot": "pants",
-        "type": "Armour",
         "value": 5,
-        "description": "A pair of leather pants. The quality isn't that good."
+        "description": "A pair of leather pants. The quality isn't that good.",
+        "slot": "pants"
     },
     {
+        "type": "Weapon",
+        "name": "Iron Pickaxe",
         "args": [
             10,
             1
         ],
-        "name": "Iron Pickaxe",
-        "slot": "right",
-        "type": "Weapon",
         "value": 10,
-        "description": "A simple iron pickaxe"
+        "description": "A simple iron pickaxe",
+        "slot": "right"
     },
     {
+        "type": "Weapon",
+        "name": "Iron Sword",
         "args": [
             15,
             1
         ],
-        "name": "Iron Sword",
-        "slot": "right",
-        "type": "Weapon",
         "value": 20,
-        "description": "A simple iron sword. Useful for slaying enemies"
+        "description": "A simple iron sword. Useful for slaying enemies",
+        "slot": "right"
     },
     {
+        "type": "Weapon",
+        "name": "Iron Axe",
         "args": [
             10,
             1
         ],
-        "name": "Iron Axe",
-        "slot": "right",
-        "type": "Weapon",
         "value": 15,
-        "description": "A simple iron axe. Useful for cutting down trees"
+        "description": "A simple iron axe. Useful for cutting down trees",
+        "slot": "right"
     },
     {
+        "value": 3,
+        "name": "Apple",
+        "description": "A tasty apple",
         "args": [
             10
         ],
-        "value": 3,
-        "description": "A tasty apple",
-        "name": "Apple",
         "type": "Consumable"
     },
     {
         "value": 2,
-        "description": "A heavy oak log. Useful for crafting.",
         "name": "Log",
+        "description": "A heavy oak log. Useful for crafting.",
         "type": "Item"
     },
     {
+        "value": 5.0,
+        "name": "Banana",
+        "description": "A tasty banana. Restores HP by 20.",
         "args": [
             20
         ],
-        "value": 5.0,
-        "description": "A tasty banana. Restores HP by 20.",
-        "name": "Banana",
         "type": "Consumable"
     },
     {
+        "type": "Weapon",
+        "name": "bare hands",
         "args": [
             5,
             1
         ],
-        "name": "bare hands",
-        "slot": "right",
-        "type": "Weapon",
         "value": 0.0,
-        "description": " "
+        "description": " ",
+        "slot": "right"
     },
     {
-        "args": [],
         "value": 2.0,
         "name": "Copper Ore",
         "description": "Crude copper ore.",
+        "args": [],
         "type": "Item"
     },
     {
-        "args": [],
         "value": 4.0,
         "name": "Iron Ore",
         "description": "Crude iron ore.",
+        "args": [],
         "type": "Item"
     }
 ]

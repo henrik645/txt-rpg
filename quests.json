@@ -1,0 +1,38 @@
+[
+    {
+      "name": "Apple Quest",
+      "dialogue": "Oh no! I have run out of apples! Do you mind getting me some?",
+      "decline": "No problem.",
+      "level": 2,
+      "steps": [
+        {
+          "item": 5,
+          "description": "Get Jane some apples.",
+          "dialogue": "Thank you!"
+        },
+        {
+          "person": 2,
+          "description": "Give the apples to Jane.",
+          "dialogue": "Thank you very much!",
+          "complete": true
+        }
+      ],
+      "reward": [
+        {
+          "type": "items",
+          "values": {
+            "5": 3,
+            "9": 2
+          }
+        },
+        {
+          "type": "gold",
+          "values": 50
+        },
+        {
+          "type": "xp",
+          "values": 250
+        }
+      ]
+    }
+]

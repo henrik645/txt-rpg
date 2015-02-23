@@ -1,0 +1,24 @@
+[
+    [
+        {
+            "args": [
+                []
+            ],
+            "description": "A small town, located in upper Kardrail region.",
+            "name": "Azela Town",
+            "type": "Town",
+            "map": "wilderness"
+        },
+        {
+            "args": [
+                [
+                    8
+                ]
+            ],
+            "description": "Red ropes divide the small room into sections.",
+            "name": "Bank",
+            "type": "Town",
+            "map": "wilderness"
+        }
+    ]
+]

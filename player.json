@@ -1,0 +1,33 @@
+{
+    "bank": {
+        "9": 4,
+        "10": 7,
+        "6": 3
+    },
+    "room": [
+        2,
+        5
+    ],
+    "in_fight": false,
+    "xp": 683,
+    "defense": 20,
+    "gold": 17.0,
+    "armour": {
+        "gloves": null,
+        "right": 3,
+        "shirt": 0,
+        "pants": 1,
+        "boots": null,
+        "left": null,
+        "both": null
+    },
+    "hp": 152.0,
+    "max_hp": 161,
+    "level": 9,
+    "inventory": {
+        "0": 1,
+        "1": 1,
+        "2": 1,
+        "4": 1
+    }
+}

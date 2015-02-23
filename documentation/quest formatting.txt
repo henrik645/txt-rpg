@@ -1,0 +1,61 @@
+[
+    {
+        "name": some name,
+        "steps":
+            [
+                {
+                    "person": person ID,
+                    "item": item ID,
+                    "other thing": other parameters,
+                    "gift": Item gived before next step.
+                },
+                {
+                    "person": person ID
+                    ...
+                }
+            ]
+    }
+}
+
+For example, a quest where the player gets the quest from merchant 1, gets an apple and gives it to merchant 2 for a reward of three apples and some armour might look like this:
+
+
+{
+    "name": "Apple Quest",
+    "dialogue": "Oh no! I have run out of apples! Do you mind getting me some?",
+    "level": 2,
+    "steps":
+        [
+            {
+                "person": 1,
+                "dialogue": "Thank you!"
+            },
+            {
+                "item": 5
+            },
+            {
+                "person": 2,
+                "dialogue": "Thank you very much!"
+                "complete": true
+            }
+        ],
+    "reward":
+    [
+        {
+            "type": "items",
+            "values":
+            {
+                "5": 3,
+                "9": 2
+            }
+        },
+        {
+            "type": "gold",
+            "values": 50
+        },
+        {
+            "type": "xp",
+            "values": 250
+        }
+    ]
+}

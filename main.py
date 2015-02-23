@@ -10,6 +10,7 @@ from item import Item, Weapon, Armour, Consumable
 from merchant import Merchant, Banker
 from monster import Monster 
 from loot_table import Loot_table
+from quests import Quest
 
 #Types of items are: Item (Normal item), Consumable (Removed after use) and Armour (Normal armour. Defense level is stored at defense) If any item restores HP, the
 #maximum amount of HP restored is stored at hp_restore
@@ -48,6 +49,11 @@ def convert_rooms(list):
                 
                 if room['banker'] != False:
                     object_row[n].banker = Banker()
+                
+                if 'quests' in room:
+                    object_row[n].quests = []
+                    for i, quest in enumerate(room['quests']):
+                        object_row[n].quests.append(quests[room['quests'][i]])
                 
             else:
                 object_row.append(False)
@@ -98,6 +104,55 @@ def convert_crafts(list, items):
         object_list.append({'output': item['output'], 'input': object_input})
     return object_list
 
+def convert_quests(list, items):
+    object_list = []
+    
+    for quest in list:
+        quest_name = quest['name']
+        quest_dialogue = quest['dialogue']
+        quest_decline = quest['decline']
+        quest_level = quest['level']
+        
+        object_steps = []
+        for n, step in enumerate(quest['steps']):
+            if 'item' in step or 'dialogue' in step or 'complete' in step:
+                object_steps.append({})
+            if 'item' in step:
+                for i, item, amount in enumerate(items.items()):
+                    if step['item'] == i:
+                        object_steps[n]['item'][item] = amount
+                        break
+                else:
+                    raise KeyError("No item with id " + str(step['item']) + " found.")
+            if 'dialogue' in step:
+                object_steps[n]['dialogue'] = step['dialogue']
+            if 'complete' in step:
+                object_steps[n]['complete'] = True
+        
+        object_rewards = []
+        for n, reward in enumerate(rewards):
+            if reward['type'] == 'items':
+                for reward_item, amount in rewards['values'].items():
+                    for i, item in enumerate(items):
+                        if reward_item == i:
+                            object_rewards[n]['items'][item] = amount
+                            break
+                else:
+                    raise KeyError("No item with id " + str(step['item']) + " found.")
+            elif reward['type'] == "xp":
+                object_rewards['xp'] = reward['values']
+            elif reward['type'] == "gold":
+                object_rewards['gold'] = reward['values']
+                    
+        
+        quest_steps = object_steps
+        quest_rewards = object_rewards
+        
+        object = Quest(quest_name, quest_dialogue, quest_decline, quest_level, quest_steps, quest_rewards)
+        object_list.append(object)
+    
+    return object_list
+
 def monster_hp(level):
     monster_hp_level = math.floor((level * 1.2) ** 2 + 20)
     return monster_hp_level
@@ -140,12 +195,28 @@ if not os.path.isfile("crafting.json"):
     print("No crafting file found.")
     sys.exit()
 
+if not os.path.isfile("quests.json"):
+    print("No quests file found.")
+    sys.exit()
+
 file = open("crafting.json", "r")
 crafting = json.loads(file.read())
 file.close()
 
 crafting = convert_crafts(crafting, items)
-    
+
+file = open("quests.json", "r")
+quests = json.loads(file.read())
+file.close()
+
+quests = convert_quests(quests, items)
+for quest in quests:
+    print(quest.get_dialogue())
+    while quest.advance_step():
+        print(quest.get_dialogue())
+    print(quest.decline)
+sys.exit()
+
 file = open("world.json", "r")
 rooms = json.loads(file.read())
 file.close()
@@ -245,6 +316,12 @@ while True:
         if hasattr(player.room, 'banker') and not player.in_fight:
             print("")
             print("A banker is present.")
+        if hasattr(player.room, 'quests') and not player.in_fight:
+            for quest in player.room.quests:
+                if not (quest in player.active_quests or quest in player.finished_quests):
+                    print("")
+                    print("There are quests available.")
+                    break
         if not player.in_fight:
             print("")
             print("Exits:")
@@ -499,6 +576,55 @@ while True:
             
         if player.armour['right'] == items[8]:
             player.armour['right'] = None
+    elif walk_to == 'p' or walk_to == 'quests':
+        take_quests = []
+        for quest in player.room.quests:
+            if not (quest in player.active_quests or quest in player.finished_quests):
+                take_quests.append(quest)
+        if len(take_quests) <= 0:
+            print("There are no available quests here.")
+            print("")
+        if len(player.active_quests) > 0 or len(player.finished_quests) > 0:
+            if len(player.active_quests) > 0:
+                print("Your active quests:")
+                for quest in player.active_quests:
+                    print(quest[0]['name'] + " (" + quest[0]['steps'][quest[1]]['description'] + ")")
+                print("")
+            if len(player.finished_quests) > 0:
+                print("Your finished quests:")
+                for quest in player.finished_quests:
+                    print(quest['name'])
+                print("")
+        if len(take_quests) > 0:
+            print("The following quests are available:")
+            for i, quest in enumerate(take_quests):
+                print(str(i) + ": " + quest['name'])
+            print("")
+            chosen_quest = input("~")
+            if chosen_quest.isdigit():
+                chosen_quest = int(chosen_quest)
+            if chosen_quest != "" and chosen_quest < len(take_quests):
+                chosen_quest = take_quests[chosen_quest]
+                print(chosen_quest['dialogue'])
+                print("")
+                print("Reward:")
+                for reward in chosen_quest['reward']:
+                    if reward['type'] == "gold":
+                        print("Gold: " + str(reward['values']))
+                    elif reward['type'] == "xp":
+                        print("XP: " + str(reward['values']))
+                    elif reward['type'] == "items":
+                        for item, amount in reward['values'].items():
+                            if amount <= 1:
+                                print(items[int(item)].name)
+                            else:
+                                print(items[int(item)].name + " (" + str(amount) + "x)")
+                if input("Accept quest? ") == "y":
+                    player.active_quests[chosen_quest] = 0
+                    print("You accepted " + chosen_quest['name'] + ".")
+                else:
+                    print(chosen_quest['decline'])
+            print("")
     else:
         for dir_abbr, direction in directions.items():
             if direction in player.room.doors:

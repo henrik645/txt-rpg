@@ -5,14 +5,14 @@ class Room:
         self.doors = copy.deepcopy(configuration)
 
 class Town(Room):
-    def __init__(self, name, description, room_configuration={}, map_type='path'):
+    def __init__(self, name, description, room_configuration={}, map_type='path', quests=[]):
         super().__init__(room_configuration)
         self.name = name
         self.description = description
         self.map_type = map_type
 
 class Wilderness(Room):
-    def __init__(self, name, description, configuration, monster_percent, map_type='path'):
+    def __init__(self, name, description, configuration, monster_percent, map_type='path', quests=[]):
         super().__init__(configuration)
         self.name = name
         self.description = description
@@ -20,7 +20,7 @@ class Wilderness(Room):
         self.map_type = type
 
 class Resource(Room):
-    def __init__(self, name, description, configuration, item=None, weapon_required=None, map_type='path'):
+    def __init__(self, name, description, configuration, item=None, weapon_required=None, map_type='path', quests=[]):
         super().__init__(configuration)
         self.name = name
         self.description = description
